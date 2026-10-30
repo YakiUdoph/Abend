@@ -1,6 +1,6 @@
 # ABEND Experience and Interface Design
 
-Status: **PROPOSED / NOT IMPLEMENTED**
+Status: **IMPLEMENTED AND BROWSER-VERIFIED FOR THE TEXT-FIRST MVP**
 
 ## Design intent
 

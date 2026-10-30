@@ -59,3 +59,42 @@ test("malformed shares and a stolen run capability are rejected", async () => wi
   const denied = await fetch(`${baseUrl}/api/investigations/${run.runId}/decisions`, { method: "POST", headers: { "content-type": "application/json", "x-abend-session": "wrong" }, body: JSON.stringify({ kind: "BYPASS_VALIDATION" }) });
   assert.equal(denied.status, 403);
 }));
+
+test("repayment rejection is auditable and protected run deletion removes retained data", async () => withServer(async (baseUrl) => {
+  const { run } = await create(baseUrl, { participants: ["Rhea", "Sol"], currency: "EUR", expenses: [{ label: "Supplies", payer: "Rhea", amount: "60.00", shares: [{ participant: "Rhea", amount: "30.00" }, { participant: "Sol", amount: "30.00" }] }], payments: [{ sender: "Sol", recipient: "Rhea", amount: "10.00", purpose: "Supplies", status: "CLAIMED" }] }); assert.ok(run);
+  const payment = run.result.payments[0]; assert.ok(payment);
+  const rejected = await decide(baseUrl, run, { kind: "REJECT_PAYMENT_CLAIM", paymentId: payment.id });
+  assert.equal(balance(rejected, "Sol", "afterConfirmations"), "-3000");
+  assert.equal(rejected.result.paymentApplications[0]?.status, "REJECTED");
+  assert.equal(rejected.result.nativeEvents.some(({ type }) => type === "human.decision"), true);
+  const denied = await fetch(`${baseUrl}/api/investigations/${run.runId}`, { method: "DELETE", headers: { "x-abend-session": "wrong" } });
+  assert.equal(denied.status, 403);
+  const deleted = await fetch(`${baseUrl}/api/investigations/${run.runId}`, { method: "DELETE", headers: { "x-abend-session": run.accessToken } });
+  assert.equal(deleted.status, 204);
+  const missing = await fetch(`${baseUrl}/api/investigations/${run.runId}/decisions`, { method: "POST", headers: { "content-type": "application/json", "x-abend-session": run.accessToken }, body: JSON.stringify({ kind: "REJECT_PAYMENT_CLAIM", paymentId: payment.id }) });
+  assert.equal(missing.status, 404);
+}));
+
+test("four participants with multiple expenses conserve independently calculated totals", async () => withServer(async (baseUrl) => {
+  const { run } = await create(baseUrl, { participants: ["Uma", "Vik", "Wen", "Zed"], currency: "USD", expenses: [
+    { label: "House", payer: "Uma", amount: "200.00", shares: [{ participant: "Uma", amount: "50.00" }, { participant: "Vik", amount: "50.00" }, { participant: "Wen", amount: "50.00" }, { participant: "Zed", amount: "50.00" }] },
+    { label: "Fuel", payer: "Vik", amount: "90.00", shares: [{ participant: "Uma", amount: "30.00" }, { participant: "Vik", amount: "20.00" }, { participant: "Wen", amount: "20.00" }, { participant: "Zed", amount: "20.00" }] },
+  ], payments: [] }); assert.ok(run);
+  assert.equal(balance(run, "Uma"), "12000");
+  assert.equal(balance(run, "Vik"), "2000");
+  assert.equal(balance(run, "Wen"), "-7000");
+  assert.equal(balance(run, "Zed"), "-7000");
+  assert.equal(run.result.projections.fromEvidence.balances.reduce((sum, item) => sum + BigInt(item.amountMinor), 0n), 0n);
+}));
+
+test("missing participants, invalid amounts, repeated runs, and independent capabilities behave safely", async () => withServer(async (baseUrl) => {
+  const missingParticipant = await create(baseUrl, { participants: ["Ari", "Bo"], currency: "EUR", expenses: [{ label: "Meal", payer: "Ari", amount: "20.00", shares: [{ participant: "Ari", amount: "10.00" }, { participant: "Cy", amount: "10.00" }] }], payments: [] });
+  assert.equal(missingParticipant.response.status, 409);
+  const invalidAmount = await create(baseUrl, { participants: ["Ari", "Bo"], currency: "EUR", expenses: [{ label: "Meal", payer: "Ari", amount: "NaN", shares: [{ participant: "Ari", amount: "10.00" }, { participant: "Bo", amount: "10.00" }] }], payments: [] });
+  assert.equal(invalidAmount.response.status, 409);
+  const payload = { participants: ["Ari", "Bo"], currency: "EUR", expenses: [{ label: "Meal", payer: "Ari", amount: "20.00", shares: [{ participant: "Ari", amount: "10.00" }, { participant: "Bo", amount: "10.00" }] }], payments: [] };
+  const first = await create(baseUrl, payload); const second = await create(baseUrl, payload); assert.ok(first.run); assert.ok(second.run);
+  assert.notEqual(first.run.runId, second.run.runId); assert.notEqual(first.run.accessToken, second.run.accessToken);
+  const crossSession = await fetch(`${baseUrl}/api/investigations/${first.run.runId}`, { method: "DELETE", headers: { "x-abend-session": second.run.accessToken } });
+  assert.equal(crossSession.status, 403);
+}));

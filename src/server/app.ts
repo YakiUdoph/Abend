@@ -14,6 +14,7 @@ import { workspacePacketFromUnknown } from "../domain/workspace.js";
 
 const MAX_REQUEST_BYTES = 32_768;
 const MAX_INVESTIGATIONS_PER_MINUTE = 10;
+const RUN_RETENTION_MS = 30 * 60 * 1_000;
 const projectRoot = process.cwd();
 
 type Investigation = ReturnType<typeof createInvestigation>;
@@ -22,6 +23,7 @@ type InvestigationSession = {
   runId: string;
   accessToken: string;
   createdAt: string;
+  expiresAt: string;
   mode: "WORKSPACE" | "DEMONSTRATION";
   packet: EvidencePacket;
   investigation: Investigation;
@@ -32,6 +34,7 @@ export type InvestigationRunResponse = {
   runId: string;
   accessToken: string;
   createdAt: string;
+  expiresAt: string;
   mode: "WORKSPACE" | "DEMONSTRATION";
   participantIds: Investigation["participantIds"];
   packet: EvidencePacket;
@@ -101,6 +104,7 @@ function publicSession(session: InvestigationSession): InvestigationRunResponse 
     runId: session.runId,
     accessToken: session.accessToken,
     createdAt: session.createdAt,
+    expiresAt: session.expiresAt,
     mode: session.mode,
     participantIds: session.investigation.participantIds,
     packet: session.packet,
@@ -130,6 +134,7 @@ function validDecisionKind(value: unknown): value is HumanDecisionKind {
   return [
     "LINK_PAYMENT_TO_AGREEMENT",
     "CONFIRM_PAYMENT_RECEIPT",
+    "REJECT_PAYMENT_CLAIM",
     "REVERSE_DECISION",
   ].includes(String(value));
 }
@@ -137,6 +142,13 @@ function validDecisionKind(value: unknown): value is HumanDecisionKind {
 export function createAbendServer() {
   const sessions = new Map<string, InvestigationSession>();
   const startsByAddress = new Map<string, number[]>();
+
+  function pruneExpiredSessions(): void {
+    const now = Date.now();
+    for (const [runId, session] of sessions) {
+      if (Date.parse(session.expiresAt) <= now) sessions.delete(runId);
+    }
+  }
 
   function startAllowed(address: string): boolean {
     const now = Date.now();
@@ -148,9 +160,11 @@ export function createAbendServer() {
   }
 
   async function createSession(packet: EvidencePacket, mode: InvestigationSession["mode"]): Promise<InvestigationSession> {
+    pruneExpiredSessions();
     const investigation = createInvestigation(packet, { delaysMs: { agreement: 55, payment: 30 }, timeoutMs: 1_000 });
     const result = await investigation.run();
-    const session = { runId: randomUUID(), accessToken: randomUUID(), createdAt: new Date().toISOString(), mode, packet, investigation, result };
+    const createdAt = new Date();
+    const session = { runId: randomUUID(), accessToken: randomUUID(), createdAt: createdAt.toISOString(), expiresAt: new Date(createdAt.getTime() + RUN_RETENTION_MS).toISOString(), mode, packet, investigation, result };
     sessions.set(session.runId, session);
     return session;
   }
@@ -235,6 +249,25 @@ export function createAbendServer() {
         };
         session.result = session.investigation.reviewDecision(body.kind, target);
         sendJson(response, 200, publicSession(session));
+        return;
+      }
+
+      const runMatch = /^\/api\/investigations\/([^/]+)$/.exec(url.pathname);
+      if (request.method === "DELETE" && runMatch) {
+        pruneExpiredSessions();
+        const runId = decodeURIComponent(runMatch[1] ?? "");
+        const session = sessions.get(runId);
+        if (!session) {
+          sendError(response, 404, "RUN_NOT_FOUND", "This investigation is no longer available.");
+          return;
+        }
+        if (request.headers["x-abend-session"] !== session.accessToken) {
+          sendError(response, 403, "SESSION_ACCESS_DENIED", "This investigation belongs to a different browser session.");
+          return;
+        }
+        sessions.delete(runId);
+        response.writeHead(204, { "cache-control": "no-store", "x-content-type-options": "nosniff" });
+        response.end();
         return;
       }
 

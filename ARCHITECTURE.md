@@ -1,7 +1,7 @@
 # ABEND Architecture
 
-Status: **PROPOSED / NOT IMPLEMENTED**  
-Purpose: build-window implementation blueprint, not working-system documentation.
+Status: **IMPLEMENTED FOR THE TEXT-FIRST MVP; PROVIDER-BACKED EXTRACTION NOT VERIFIED**
+Purpose: implemented architecture and remaining-boundary documentation. Historical future-tense passages describe the design that guided the current system.
 
 ## Architecture principles
 

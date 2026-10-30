@@ -17,7 +17,7 @@ An optional **Load fictional sample** control is clearly labeled. No sample valu
 
 Selecting **Investigate records** creates immutable evidence spans and launches distinct Agreement and Payment investigators through genuine `@mozaik-ai/core` `runLoop` calls. Their validated findings enter shared runtime state through semantic events. The deterministic reconciliation participant reacts to both streams and computes currency-separated balances with integer minor units.
 
-Repayments are not applied merely because a record says `RECEIVED`. A reviewer must link purpose and confirm receipt through versioned runtime decisions. The UI shows conservative and after-confirmation projections, evidence citations, a friendly summary, and sanitized authentic runtime metadata.
+Repayments are not applied merely because a record says `RECEIVED`. A reviewer must link purpose and confirm or reject the claim through versioned, reversible runtime decisions. The UI shows conservative and after-confirmation projections, evidence citations, a friendly summary, and sanitized authentic runtime metadata.
 
 Conversation excerpts are preserved as evidence but are not presented as generally understood natural language. External-model extraction is not part of the core workflow.
 
@@ -65,7 +65,7 @@ npm.cmd run test:browser
 git diff --check
 ```
 
-The latest T008 local run recorded 53 passing automated tests and a passing Chrome journey on a new USD scenario. Exact IDs, timestamps, and overlap measurements are generated on each run; see `PROGRESS.md` for the latest recorded evidence.
+The latest T009 local run recorded 56 passing automated tests and a passing Chrome journey on a new USD scenario. Exact IDs, timestamps, and overlap measurements are generated on each run; see `PROGRESS.md` for the latest recorded evidence.
 
 ## Security and privacy boundaries
 
@@ -74,7 +74,7 @@ The latest T008 local run recorded 53 passing automated tests and a passing Chro
 - Evidence is rendered through DOM text nodes under a same-origin Content Security Policy.
 - Investigators receive no shell, filesystem, bank, payment, secret, or broad-network tools.
 - Raw conversations are not logged by application code.
-- Runs exist only in one server process. There is no durable persistence, user account authentication, or cross-device recovery.
+- Runs exist only in one server process, expire after 30 minutes, and can be deleted by their capability-holding browser. There is no durable persistence, user account authentication, or cross-device recovery.
 - Abend does not connect to banks, initiate payments, collect debts, send messages, or perform implicit currency conversion.
 
 ## Inference honesty
@@ -89,7 +89,7 @@ Still unavailable:
 
 - free-form natural-language extraction, OCR, or PDF/image extraction;
 - ratio or receipt-itemized split entry (exact unequal shares are supported);
-- durable storage, authenticated identities, retention/deletion controls, and multi-device sessions;
+- durable storage, authenticated identities, and multi-device sessions;
 - successful live-model inference, durable production storage, and submission receipt.
 
 The public repository is [YakiUdoph/Abend](https://github.com/YakiUdoph/Abend). Official competition requirements and current limitations are tracked in `RULES.md`, `TASKS.md`, and `PROGRESS.md`.

@@ -2,7 +2,11 @@
 
 Updated: **2026-10-30**
 
-## T008 real-input implementation — local PASS / external release NOT STARTED
+## T009 final verification — IN PROGRESS
+
+Verified so far on 2026-10-30: release-blocker fixes add explicit repayment rejection/reversal, capability-protected run deletion, 30-minute in-process expiry, independent-session checks, and broader real-input arithmetic coverage. `npm.cmd run typecheck`, `npm.cmd test` (56 passed), `npm.cmd run build`, `npm.cmd run proof`, `npm.cmd run test:browser`, `npm.cmd audit` (0 vulnerabilities), and `git diff --check` pass locally. The browser journey uses new Mira/Niko/Ola records, exercises confirm/reverse/reject, citations, copy, runtime inspection, deletion/reset, anchors, accessibility, and 1280/768/390 px overflow. Clean-install and final public-deployment verification are still pending; no final readiness decision is recorded yet.
+
+## T008 real-input implementation — local and public PASS (historical baseline)
 
 Implemented and verified on 2026-10-30:
 
@@ -39,10 +43,10 @@ Release truth:
 **T003 deterministic reconciliation engine: UNIT/SDK INTEGRATION PASS; acceptance cases A, C, F, H and K pass.**  
 **T004 evidence explanations and dual financial views: UNIT/SDK INTEGRATION PASS; focused acceptance cases G, I and Q pass.**  
 **T005 premium frontend and complete fictional demonstration: LOCAL BROWSER PASS.**  
-**T006 release audit: PARTIAL PASS; clean checkout, security, A/C–Q focused coverage and browser verification pass; B remains unsupported.**
-**Product application: LOCAL FICTIONAL FLOW WORKING AND PUBLIC REPOSITORY PUBLISHED; DEPLOYMENT/SUBMISSION NOT YET COMPLETE.**
+**T006 release audit: HISTORICAL PARTIAL PASS; superseded by T008 exact-share support and T009 verification.**
+**Product application: BOUNDED REAL-INPUT FLOW WORKING AND PUBLICLY DEPLOYED; SUBMISSION NOT STARTED.**
 
-The local fictional application now runs the full evidence, investigation, review, dual-projection, citation and verification journey. It does not expose arbitrary/private-data ingestion, deployment, OCR, authentication, bank connection, payment initiation or successful live-provider extraction.
+The deployed application now runs the bounded structured-input evidence, investigation, review, dual-projection, citation and verification journey. It does not provide free-form extraction, OCR, authenticated identities, bank connection, payment initiation or successful live-provider extraction.
 
 ## Readiness dashboard
 
@@ -202,7 +206,7 @@ Implemented and executed on 2026-10-30:
 - The Windows headless harness now uses an explicit browser-level CDP target, bounded command timeouts and the standard `ws` transport. `--no-sandbox` is limited to the disposable local browser-test process and is not part of the Abend server/runtime.
 - Production deployment, persistent sessions, authenticated reviewer identity, the complete A–Q browser matrix and successful live-model extraction remain unavailable.
 
-## Remaining blockers
+## Historical T002 provider blocker evidence
 
 T002D final recovery verification executed on 2026-10-30:
 
@@ -234,9 +238,9 @@ T002C verification executed on 2026-10-30:
 
 ## Next action
 
-Finish the external portion of T006: authenticate to Render and deploy the committed blueprint, smoke-test a fresh public session, then complete the organizer form and preserve its receipt. Do not claim those steps before their real evidence exists.
+Complete T009 against the final commit: isolated clean install, push, wait for Render auto-deployment, run the public fresh-browser journey, record final SHA/results, and decide presentation-video readiness. Do not submit the organizer form during T009.
 
 ## Completion statement
 
-T001–T005 pass their recorded deterministic/local scopes. T002D live extraction remains **BLOCKED** after final HTTP 503 responses. T006 adds a clean-checkout pass, 49 passing tests, focused A/C–Q coverage, security/dependency checks, a passing Chrome journey, a public repository and a free-host blueprint. Unequal-split case B, persistence, production deployment, authenticated form access and submission receipt remain incomplete. The product is **publicly reproducible but not yet deployed or submitted**.
+T001–T005 pass their recorded scopes. T002D live extraction remains **BLOCKED** after HTTP 503 responses. T008 added exact unequal shares, bounded real-input use and a verified public Render deployment. T009 is still in progress until the final clean-install and post-deployment public browser checks complete. Durable persistence, authenticated identities, free-form provider extraction and a submission receipt remain unavailable; the hackathon entry has not been submitted.
 

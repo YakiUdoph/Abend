@@ -39,7 +39,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Phase 4 — Implement text-based evidence ingestion
 
-**T002 status: UNIT PASS / LIVE PROVIDER BLOCKED (2026-10-30).** General pasted/byte text ingestion now enforces fatal UTF-8 decoding, bounded source/packet sizes, empty-input rejection, CRLF/NFC normalization, stable content-addressed source/packet IDs, exact line spans, SHA-256 hashes, evidence types, canonical aliases, and explicit currencies. No OCR/PDF or persistence was added. A server transport remains NOT STARTED.
+**T002 status: UNIT PASS / LIVE PROVIDER BLOCKED (2026-10-30).** General pasted/byte text ingestion now enforces fatal UTF-8 decoding, bounded source/packet sizes, empty-input rejection, CRLF/NFC normalization, stable content-addressed source/packet IDs, exact line spans, SHA-256 hashes, evidence types, canonical aliases, and explicit currencies. No OCR/PDF or durable persistence was added. The bounded server transport was subsequently implemented in T005/T008.
 
 - **Objective:** convert pasted conversation and record text into immutable, bounded, numbered sources/spans.
 - **Dependencies:** domain schemas; privacy limits.
@@ -93,7 +93,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Phase 9 — Build the premium frontend
 
-**T005 status: LOCAL BROWSER PASS (2026-10-30).** A framework-free TypeScript client and local Node API implement the documented fictional journey over the existing ingestion, Mozaik runtime, reconciliation, review and projection contracts. Chrome executed the actual evidence → investigation → findings → review → recalculation → citation → verification path. The interface distinguishes demonstration mode from blocked live inference, accepts no private/arbitrary input, renders authentic runtime metadata, and provides responsive/accessible empty, loading, error and partial-result behavior. Production deployment remains NOT STARTED.
+**T005 status: LOCAL BROWSER PASS (2026-10-30), superseded by T008/T009 product verification.** A framework-free TypeScript client and Node API implement the evidence → investigation → findings → review → recalculation → citation → verification path. T008 added bounded new structured input and production deployment; provider-backed free-form extraction remains unavailable.
 
 - **Objective:** implement the journey and verification view in `DESIGN.md`.
 - **Dependencies:** stable APIs from Phases 4–8.
@@ -104,7 +104,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Phase 10 — Test adversarial and failure cases
 
-**T006 status: PARTIAL PASS (2026-10-30).** Cases A and C–Q have focused automated coverage and the complete suite passes from an isolated clean checkout. Case B remains unsupported because the current validated agreement contract only permits documented equal splits; the release does not infer or simulate unequal terms. The primary fictional browser journey, concurrency proof, security scan and accessibility smoke checks pass.
+**T006 historical status: PARTIAL PASS (2026-10-30), superseded by T008/T009.** T008 added validated exact unequal shares and focused A–Q coverage. T009 reruns the complete suite, security checks, local browser journey, clean install and public journey before release readiness is decided.
 
 - **Objective:** execute the complete acceptance matrix and fix unsafe failure behavior.
 - **Dependencies:** integrated application.
@@ -137,7 +137,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## T008 — Mozaik-first real-input product
 
-**Local implementation status: PASS (2026-10-30). External release status: NOT STARTED.**
+**Local implementation status: PASS (2026-10-30). Public deployment status: VERIFIED at the T008 commit; T009 redeployment verification pending.**
 
 - The normal browser path starts empty and accepts bounded participants, currency, expenses, payer, exact shares, repayments/statuses, and optional conversation evidence.
 - Agreement and Payment receive the submitted immutable packet through distinct real Mozaik loops; runtime events and shared state drive deterministic reconciliation.
@@ -150,8 +150,6 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 ## Required acceptance matrix
 
 T008 superseding status: **A–Q PASS in focused automated coverage; B now passes for exact unequal shares. These are not seventeen browser journeys.**
-
-Release status: **A and C–Q PASS in focused automated coverage; B NOT IMPLEMENTED; the matrix is not represented as seventeen browser journeys.**
 
 | ID | Case | Arithmetic assertion | Evidence/safety assertion |
 | --- | --- | --- | --- |
@@ -175,5 +173,5 @@ Release status: **A and C–Q PASS in focused automated coverage; B NOT IMPLEMEN
 
 ## Exact next implementation task
 
-**T006 continuation — authenticated external release steps.** Deploy the committed Render blueprint from the public repository, run a public clean-session smoke test, and submit through the authenticated organizer dashboard. Record the real deployment URL and submission receipt only after those external steps succeed. Case B remains an explicit product limitation unless the validated domain contract is deliberately expanded and tested.
+**T009 — final verification, competition audit and release preparation.** Finish the clean-install and public fresh-browser checks against the final commit, reconcile release documentation, and prepare the presentation-video handoff. Do not submit the hackathon entry or claim a submission receipt during T009.
 

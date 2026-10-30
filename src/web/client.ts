@@ -91,7 +91,11 @@ function loadSample(): void {
   ($("#conversation") as HTMLTextAreaElement).value = "FICTIONAL TEST DATA: Alex, Bea and Chen agreed to the explicit accommodation shares entered above.";
   $("#sample-notice").removeAttribute("hidden");
 }
-function resetWorkspace(): void {
+async function resetWorkspace(): Promise<void> {
+  const prior = state.run;
+  if (prior) {
+    await fetch(`/api/investigations/${encodeURIComponent(prior.runId)}`, { method: "DELETE", headers: { "x-abend-session": prior.accessToken } }).catch(() => undefined);
+  }
   state.run = undefined; ( $("#records-form") as HTMLFormElement).reset(); $("#expense-records").replaceChildren(); $("#payment-records").replaceChildren(); addExpense();
   $("#sample-notice").setAttribute("hidden", ""); $("#evidence-list").replaceChildren();
   ["#investigation-results", "#findings-section", "#review-section", "#balances-section", "#message-section"].forEach((selector) => $(selector).setAttribute("hidden", ""));
@@ -116,11 +120,35 @@ function renderProjection(projection: FinancialProjection, balanceSelector: stri
   if (!projection.balances.length) balances.append(el("p", "small-note", "No supported balance yet."));
   const terms = $(termSelector); terms.replaceChildren(); projection.terms.forEach((term) => { const row = el("article", "term-row"); const header = el("header"); header.append(el("strong", "", term.kind), el("span", "money", formatMoney(term.amountMinor, term.currency, term.exponent, true))); row.append(header, statusChip(term.status), el("p", "", reasonLabel(term.reason)), citationButtons(term.evidenceReferences)); terms.append(row); });
 }
-function activeDecisionIds(run: InvestigationRunResponse): Set<string> { return new Set(run.result.projections.afterConfirmations.terms.flatMap(({ decisionReferences }) => decisionReferences).filter(({ active }) => active).map(({ decisionId }) => decisionId)); }
+function activeDecisionIds(run: InvestigationRunResponse): Set<string> {
+  const reversed = new Set(run.result.decisions.filter(({ kind }) => kind === "REVERSE_DECISION").map(({ reversesDecisionId }) => reversesDecisionId).filter((id): id is string => Boolean(id)));
+  return new Set(run.result.decisions.filter(({ kind, id }) => kind !== "REVERSE_DECISION" && !reversed.has(id)).map(({ id }) => id));
+}
 function renderReview(run: InvestigationRunResponse): void {
-  const card = $("#review-card"); card.replaceChildren(); const payment = run.result.payments[0]; const agreement = run.result.agreements[0]; const history = $("#decision-history"); history.replaceChildren();
-  if (!payment || !agreement) card.append(el("p", "", "No payment finding currently requires a review decision."));
-  else { const active = activeDecisionIds(run); const link = run.result.decisions.find(({ kind, id }) => kind === "LINK_PAYMENT_TO_AGREEMENT" && active.has(id)); const confirmation = run.result.decisions.find(({ kind, id }) => kind === "CONFIRM_PAYMENT_RECEIPT" && active.has(id)); card.append(el("h4", "", `Was ${payment.sender}'s transfer to ${payment.recipient} received for ${agreement.expenseLabel}?`), el("p", "", "Linking purpose and confirming receipt are separate decisions.")); const actions = el("div", "review-actions"); if (!link) { const button = el("button", "button button-secondary", `Link to ${agreement.expenseLabel}`); button.type = "button"; button.dataset.action = "link-payment"; button.addEventListener("click", () => void applyDecision("LINK_PAYMENT_TO_AGREEMENT", { paymentId: payment.id, agreementId: agreement.id })); actions.append(button); } else if (!confirmation) { const button = el("button", "button button-primary", "Confirm receipt"); button.type = "button"; button.dataset.action = "confirm-payment"; button.addEventListener("click", () => void applyDecision("CONFIRM_PAYMENT_RECEIPT", { paymentId: payment.id })); actions.append(button); } else { actions.append(statusChip("CONFIRMED")); const button = el("button", "button button-danger", "Reverse receipt confirmation"); button.type = "button"; button.dataset.action = "reverse-payment"; button.addEventListener("click", () => void applyDecision("REVERSE_DECISION", { reversesDecisionId: confirmation.id })); actions.append(button); } card.append(actions); }
+  const card = $("#review-card"); card.replaceChildren(); const history = $("#decision-history"); history.replaceChildren(); const active = activeDecisionIds(run);
+  if (!run.result.payments.length) card.append(el("p", "", "No payment finding currently requires a review decision."));
+  for (const payment of run.result.payments) {
+    const agreement = run.result.agreements.find(({ expenseLabel }) => payment.purpose.toLocaleLowerCase("en-US").includes(expenseLabel.toLocaleLowerCase("en-US"))) ?? run.result.agreements[0];
+    const item = el("article", "review-item");
+    if (!agreement) { item.append(el("p", "", `No agreement can be linked to ${payment.sender}'s payment.`)); card.append(item); continue; }
+    const link = run.result.decisions.find(({ kind, id, paymentId }) => kind === "LINK_PAYMENT_TO_AGREEMENT" && paymentId === payment.id && active.has(id));
+    const confirmation = run.result.decisions.find(({ kind, id, paymentId }) => kind === "CONFIRM_PAYMENT_RECEIPT" && paymentId === payment.id && active.has(id));
+    const rejection = run.result.decisions.find(({ kind, id, paymentId }) => kind === "REJECT_PAYMENT_CLAIM" && paymentId === payment.id && active.has(id));
+    item.append(el("h4", "", `${payment.sender} → ${payment.recipient}: ${payment.purpose}`), el("p", "", "Linking purpose, confirming receipt, and rejecting the claim are separate decisions."));
+    const actions = el("div", "review-actions");
+    if (rejection) {
+      actions.append(statusChip("REJECTED"));
+      const reverse = el("button", "button button-secondary", "Reverse rejection"); reverse.type = "button"; reverse.dataset.action = "reverse-rejection"; reverse.addEventListener("click", () => void applyDecision("REVERSE_DECISION", { reversesDecisionId: rejection.id })); actions.append(reverse);
+    } else if (confirmation) {
+      actions.append(statusChip("CONFIRMED"));
+      const reverse = el("button", "button button-danger", "Reverse receipt confirmation"); reverse.type = "button"; reverse.dataset.action = "reverse-payment"; reverse.addEventListener("click", () => void applyDecision("REVERSE_DECISION", { reversesDecisionId: confirmation.id })); actions.append(reverse);
+    } else {
+      if (!link) { const button = el("button", "button button-secondary", `Link to ${agreement.expenseLabel}`); button.type = "button"; button.dataset.action = "link-payment"; button.addEventListener("click", () => void applyDecision("LINK_PAYMENT_TO_AGREEMENT", { paymentId: payment.id, agreementId: agreement.id })); actions.append(button); }
+      else { const confirm = el("button", "button button-primary", "Confirm receipt"); confirm.type = "button"; confirm.dataset.action = "confirm-payment"; confirm.addEventListener("click", () => void applyDecision("CONFIRM_PAYMENT_RECEIPT", { paymentId: payment.id })); actions.append(confirm); }
+      const reject = el("button", "button button-danger", "Reject repayment claim"); reject.type = "button"; reject.dataset.action = "reject-payment"; reject.addEventListener("click", () => void applyDecision("REJECT_PAYMENT_CLAIM", { paymentId: payment.id })); actions.append(reject);
+    }
+    item.append(actions); card.append(item);
+  }
   if (!run.result.decisions.length) history.append(el("li", "", "No reviewer decisions yet.")); run.result.decisions.forEach((decision) => { const item = el("li"); item.append(el("strong", "", decision.kind.replaceAll("_", " ")), el("code", "", decision.id), el("span", "small-note", decision.occurredAt)); history.append(item); });
 }
 function renderRun(run: InvestigationRunResponse): void {
@@ -143,6 +171,6 @@ async function applyDecision(kind: string, target: Record<string, string>): Prom
   finally { state.busy = false; }
 }
 function initialize(): void {
-  addExpense(); $("#add-expense").addEventListener("click", () => addExpense()); $("#add-payment").addEventListener("click", () => addPayment()); $("#load-sample").addEventListener("click", loadSample); $("#new-investigation").addEventListener("click", resetWorkspace); $("#records-form").addEventListener("submit", (event) => { event.preventDefault(); void startInvestigation(); }); $("#verification-nav").addEventListener("click", () => ($("#verification-dialog") as HTMLDialogElement).showModal()); $("#close-verification").addEventListener("click", () => ($("#verification-dialog") as HTMLDialogElement).close()); $("#copy-message").addEventListener("click", async () => { const textarea = $("#friendly-message") as HTMLTextAreaElement; try { await navigator.clipboard.writeText(textarea.value); $("#copy-status").textContent = "Copied."; } catch { textarea.select(); $("#copy-status").textContent = "Select and copy the highlighted message."; } });
+  addExpense(); $("#add-expense").addEventListener("click", () => addExpense()); $("#add-payment").addEventListener("click", () => addPayment()); $("#load-sample").addEventListener("click", loadSample); $("#new-investigation").addEventListener("click", () => void resetWorkspace()); $("#records-form").addEventListener("submit", (event) => { event.preventDefault(); void startInvestigation(); }); $("#verification-nav").addEventListener("click", () => ($("#verification-dialog") as HTMLDialogElement).showModal()); $("#close-verification").addEventListener("click", () => ($("#verification-dialog") as HTMLDialogElement).close()); $("#copy-message").addEventListener("click", async () => { const textarea = $("#friendly-message") as HTMLTextAreaElement; try { await navigator.clipboard.writeText(textarea.value); $("#copy-status").textContent = "Copied."; } catch { textarea.select(); $("#copy-status").textContent = "Select and copy the highlighted message."; } });
 }
 initialize();

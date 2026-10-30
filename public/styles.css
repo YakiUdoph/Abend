@@ -249,6 +249,7 @@ h1 em { color: var(--emerald); font-weight: 400; }
 .review-layout { display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 2rem; }
 .review-card, .decision-panel { border: 1px solid var(--line); padding: 1.4rem; }
 .review-card h4 { font-size: 1.1rem; }
+.review-item + .review-item { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .review-card .record { margin: 1rem 0; padding: 1rem; background: #f8f5ee; font-family: ui-monospace, monospace; font-size: 0.85rem; }
 .review-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
 .decision-panel { background: #f8f5ee; }
