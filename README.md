@@ -52,10 +52,10 @@ Browser (semantic HTML + compiled TypeScript client)
 
 ## Install and run
 
-Requirements: Node.js 20+, npm and a current Chromium browser for the browser test. The recorded T005 run used Node.js 24.18.0 and Chrome 156.
+Requirements: Node.js 20–24, npm and a current Chromium browser for the browser test. The recorded T006 run used Node.js 24.18.0 and Chrome 156.
 
 ```powershell
-npm.cmd install
+npm.cmd ci --ignore-scripts
 npm.cmd run typecheck
 npm.cmd test
 npm.cmd run build
@@ -129,6 +129,24 @@ git diff --check
 
 See `PROGRESS.md` for the latest executed counts, authentic loop evidence and limitations.
 
+## Public release and hosting
+
+The intended public repository is [YakiUdoph/Abend](https://github.com/YakiUdoph/Abend). The repository is the canonical source for the fictional demonstration and its reproducibility evidence.
+
+`render.yaml` describes a free Render web service with the production build, start command and `/health` check. Abend deliberately keeps each demonstration run in one server process; on Render's free service, a cold start or service restart clears those in-memory runs. A fresh demonstration can then be started normally. No hosting account or payment method is required by the application itself, and no secrets are required for demonstration mode.
+
+The blueprint has been prepared and locally verified, but a production URL is not claimed until an authenticated Render deployment and public smoke test succeed.
+
+## Submission summary
+
+**Project:** Abend — Settle the numbers. Keep the friendship.
+
+**Track:** Freestyle
+
+**Description:** Abend is an evidence-based shared-expense and repayment reconciliation application. Two concurrent Mozaik investigators independently inspect a fictional conversation and payment record, publish citation-backed findings into shared state, and trigger deterministic integer-minor-unit reconciliation. A reviewer can resolve ambiguity through auditable decisions and compare the evidence-only result with the recomputed result after confirmations.
+
+**Why the agents are genuinely concurrent:** one action launches separate Agreement and Payment `runLoop` calls without awaiting either. Tests and the browser verification view use native runtime events to require distinct SDK-generated loop IDs and overlapping start/completion windows. Reconciliation consumes semantic findings from both producers through shared state; it does not substitute a renamed sequential step or hardcoded final answer.
+
 ## Not yet available
 
 - Successful live Gemini extraction.
@@ -137,4 +155,4 @@ See `PROGRESS.md` for the latest executed counts, authentic loop evidence and li
 - Persistent/auditable server storage, authenticated users and retention/deletion controls.
 - OCR/PDF ingestion, banking, payment initiation, automatic sending or FX conversion.
 - Production deployment and submission verification.
-- The complete A–Q browser acceptance matrix; the implemented fictional journey covers the core deterministic and concurrency path.
+- Documented unequal, ratio or itemized splits (acceptance case B). Cases A and C–Q have focused automated coverage; the browser journey covers the core deterministic and concurrency path rather than every fixture.

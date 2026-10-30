@@ -1,6 +1,6 @@
 # ABEND Build Plan
 
-Status: **T001 PASS; T002 unit/SDK scope PASS; T002D live provider BLOCKED; T003 deterministic reconciliation PASS; T004 evidence projections PASS; T005 local fictional application PASS**
+Status: **T001 PASS; T002 unit/SDK scope PASS; T002D live provider BLOCKED; T003 deterministic reconciliation PASS; T004 evidence projections PASS; T005 local fictional application PASS; T006 release audit PARTIAL**
 
 The order is deliberate. A phase advances only when its acceptance criteria and evidence exist. File paths below are proposed and may be refined after Phase 1, but changes must preserve separation between evidence extraction and arithmetic.
 
@@ -104,6 +104,8 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Phase 10 — Test adversarial and failure cases
 
+**T006 status: PARTIAL PASS (2026-10-30).** Cases A and C–Q have focused automated coverage and the complete suite passes from an isolated clean checkout. Case B remains unsupported because the current validated agreement contract only permits documented equal splits; the release does not infer or simulate unequal terms. The primary fictional browser journey, concurrency proof, security scan and accessibility smoke checks pass.
+
 - **Objective:** execute the complete acceptance matrix and fix unsafe failure behavior.
 - **Dependencies:** integrated application.
 - **Files:** `tests/acceptance/*.test.ts`, fictional fixtures, test configuration.
@@ -112,6 +114,8 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 - **Evidence:** timestamped CI/local reports with commit SHA.
 
 ## Phase 11 — Deploy and record the authentic demonstration
+
+**T006 status: PREPARED / NOT DEPLOYED (2026-10-30).** A production build, `/health` route and free Render blueprint are present. Render fits the single-process in-memory demonstration while active, but free-service restarts discard sessions. No authenticated Render CLI/API session is available, so no production URL or public-host smoke result is claimed.
 
 - **Objective:** deploy the working app and capture the genuine fixture flow and runtime evidence.
 - **Dependencies:** Phase 10; safe hosting; secrets; privacy/redaction; organizer rules recheck.
@@ -122,6 +126,8 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Phase 12 — Audit submission requirements and submit
 
+**T006 status: PARTIAL / NOT SUBMITTED (2026-10-30).** The intended `YakiUdoph/Abend` repository exists publicly and the local `origin` matches it. Public rules and the Freestyle brief were rechecked. The authenticated organizer dashboard, private announcements and submission form are unavailable in this environment; no receipt is claimed.
+
 - **Objective:** complete Freestyle submission before the current 20:00 CET deadline.
 - **Dependencies:** account/registration; public repo; final official dashboard/Discord/email check.
 - **Files:** final `README.md`, repository settings and submission form (external).
@@ -130,6 +136,8 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 - **Evidence:** submission confirmation and final SHA. Never fabricate either.
 
 ## Required acceptance matrix
+
+Release status: **A and C–Q PASS in focused automated coverage; B NOT IMPLEMENTED; the matrix is not represented as seventeen browser journeys.**
 
 | ID | Case | Arithmetic assertion | Evidence/safety assertion |
 | --- | --- | --- | --- |
@@ -153,5 +161,5 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Exact next implementation task
 
-**T006 — deployment-readiness and submission audit.** Complete the remaining Phase 10 acceptance cases required for the submitted scope, verify a production host can preserve the Mozaik request lifecycle, run clean-install/security/accessibility smoke checks from the committed SHA, and only then deploy the fictional application. Recheck the authenticated organizer dashboard/Discord/email, create or confirm the intended public GitHub remote, verify judge access, and record the real deployment URL and submission receipt. Do not resume Gemini debugging or claim submission before those external checks succeed.
+**T006 continuation — authenticated external release steps.** Push the verified release commit to the confirmed public remote, deploy the committed Render blueprint from the repository, run a public clean-session smoke test, and submit through the authenticated organizer dashboard. Record the real deployment URL and submission receipt only after those external steps succeed. Case B remains an explicit product limitation unless the validated domain contract is deliberately expanded and tested.
 

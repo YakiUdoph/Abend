@@ -11,7 +11,8 @@ Updated: **2026-10-30**
 **T003 deterministic reconciliation engine: UNIT/SDK INTEGRATION PASS; acceptance cases A, C, F, H and K pass.**  
 **T004 evidence explanations and dual financial views: UNIT/SDK INTEGRATION PASS; focused acceptance cases G, I and Q pass.**  
 **T005 premium frontend and complete fictional demonstration: LOCAL BROWSER PASS.**  
-**Product application: LOCAL FICTIONAL FLOW WORKING; NOT DEPLOYED OR SUBMITTED.**
+**T006 release audit: PARTIAL PASS; clean checkout, security, A/C–Q focused coverage and browser verification pass; B remains unsupported.**
+**Product application: LOCAL FICTIONAL FLOW WORKING; PUBLICATION/DEPLOYMENT/SUBMISSION NOT YET COMPLETE.**
 
 The local fictional application now runs the full evidence, investigation, review, dual-projection, citation and verification journey. It does not expose arbitrary/private-data ingestion, deployment, OCR, authentication, bank connection, payment initiation or successful live-provider extraction.
 
@@ -44,25 +45,46 @@ The local fictional application now runs the full evidence, investigation, revie
 | T002 text ingestion | UNIT PASS | UTF-8, size, empty input, stable spans/hashes/IDs, aliases, evidence types and currencies covered |
 | T002 structured extraction boundary | UNIT/SDK INTEGRATION PASS | Strict Mozaik schemas and validation feed genuine loops/shared state |
 | Mozaik Cloud evidence | NOT TESTED | SDK reported telemetry disabled because `MOZAIK_API_KEY` is absent |
-| Full acceptance matrix | PARTIAL / NOT COMPLETE | Focused deterministic coverage completes A, C, F, G, H, I, K and Q; the complete A–Q browser/end-to-end matrix is not implemented |
-| Deployment/submission | NOT STARTED | Local fictional application works; hosting lifecycle, public remote and submission access remain unverified |
+| T006 combined tests | UNIT/API/BROWSER PASS | 49 passed, 0 failed; proof and Chrome journey passed on 2026-10-30 |
+| Full acceptance matrix | PARTIAL / NOT COMPLETE | Focused automated coverage passes A and C–Q; unequal-split case B is not implemented; these are not all browser journeys |
+| Public repository | VERIFIED / NOT YET PUSHED | `https://github.com/YakiUdoph/Abend` exists, is public, and matches local `origin`; remote publication awaits the final commit |
+| Hosting | PREPARED / NOT DEPLOYED | Render free-service blueprint and health route are present; no authenticated Render session is available |
+| Submission | NOT SUBMITTED | Public rules rechecked; authenticated dashboard/form and private organizer channels are unavailable |
 
 ## Environment and credentials
 
 Direct observations on 2026-10-30:
 
 - **VERIFIED:** Windows/PowerShell workspace; Git 2.47.1; Node.js v24.18.0; npm 11.16.0 via `npm.cmd`.
-- **VERIFIED:** branch `main` has no commits.
+- **VERIFIED:** branch `main` has a committed release candidate; exact T006 clean-checkout evidence is recorded below.
 - **VERIFIED:** PowerShell blocks the `npm.ps1` shim under the current execution policy; `npm.cmd` works and should be used unless policy is intentionally changed.
 - **VERIFIED:** `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `MOZAIK_API_KEY`, and `VERCEL_TOKEN` were not present in the current process environment. Only presence was checked; no values were read.
 - **VERIFIED:** `.env.local` contains the required variable names; only names/presence were checked and no secret value was printed.
 - **VERIFIED:** local hardware is a Dell Latitude 7200 2-in-1 with an Intel i7-8665U (4 cores / 8 logical processors), 15.76 GiB RAM, Intel UHD 620 integrated graphics reporting 1 GiB adapter memory, and 140.56 GiB free disk. Ollama/LM Studio/llama-server were not installed or detected.
 - **VERIFIED:** installed direct dependencies are `@mozaik-ai/core@4.0.6`, `@types/node@24.10.0`, and `typescript@5.9.3`; npm initially reported zero audited vulnerabilities.
-- **UNKNOWN:** registration, Mozaik Cloud account, provider billing/quota, GitHub remote, hosting account and submission permissions.
+- **UNKNOWN:** registration, Mozaik Cloud account, provider billing/quota, hosting account and submission permissions. The public GitHub destination is verified.
 - **VERIFIED:** TypeScript compilation and deterministic unit/SDK-integration execution during T002.
 - **PARTIAL:** a live provider request reached Gemini, but HTTP 500/503 prevented model output; Mozaik Cloud, deployment, and authenticated organizer dashboard/Discord/email updates remain NOT TESTED.
 
-Node 24 is newer than the examples’ documented Node 18+ minimum, but compatibility is **NOT TESTED**. If the SDK or deployment target is not compatible, select an organizer-supported LTS version during Phase 1 and record it.
+Node 24.18.0 compatibility is verified for the local clean-install, build, proof and Chrome journey. The package also declares the supported release range as Node 20 through 24; other versions are not claimed.
+
+## T006 release-readiness evidence
+
+Executed on 2026-10-30 against committed release candidate `27edd3c73763a5aface595dfb53385b75884a549`:
+
+- A separate clone at `C:\Users\PC\AppData\Local\Temp\abend-clean-27edd3c` started without `node_modules`, `dist`, `.artifacts` or `.env.local`.
+- `npm.cmd ci --ignore-scripts`: exit 0; 143 packages installed from the lockfile.
+- `npm.cmd run typecheck`: exit 0.
+- `npm.cmd test`: **49 passed, 0 failed**. Focused tests explicitly cover A and C–Q; B is not implemented because the validated agreement schema supports equal splits only.
+- `npm.cmd run build`: exit 0.
+- `npm.cmd run proof`: exit 0 with real Mozaik loops and the deterministic inference runner.
+- `npm.cmd run test:browser`: exit 0 in Chrome 156.0.8078.74. Distinct loops overlapped by **46 ms**; the timeline contained 23 events. Skip-link focus, reduced motion, button names and 390 px overflow checks passed.
+- `git diff --check` and `git status --short`: exit 0 with no output in the isolated clone after generated/ignored output.
+- `npm audit`: **0 vulnerabilities**. The first sandboxed registry request failed due restricted networking; the approved network-enabled retry succeeded.
+- Tracked-content scans found no environment files other than `.env.example`, no candidate API/private keys, and no IBAN/routing/card-like financial records. Generated output and `.env.local` remain ignored.
+- `GET /health` is covered by an API test and the production server accepts host/port environment variables.
+- The public rules and Freestyle brief were rechecked. They require a public GitHub repository and an explanation of concurrent Mozaik agents; the published deadline remains 2026-10-31 20:00 CET.
+- Render was selected as the free-host fit because it can run the Node process and health check. Its free instance can sleep/restart, so in-memory demonstration sessions are not durable. The blueprint is prepared; no deployment is claimed without authenticated access and a public smoke test.
 
 ## T001 SDK verification
 
@@ -177,15 +199,16 @@ T002C verification executed on 2026-10-30:
 - **UNKNOWN:** whether the team is registered and can access the participant dashboard/submission form.
 - **UNKNOWN:** kickoff/Discord/email updates or a changed brief not visible on public pages.
 - **BLOCKED:** Gemini returned transient provider-server HTTP 500/503 responses during the controlled live run; successful model output remains unverified.
-- **MISSING/UNKNOWN:** repository remote/public access and hosting credentials.
+- **VERIFIED:** the intended public repository exists at `https://github.com/YakiUdoph/Abend`, is public, and matches local `origin`.
+- **MISSING/UNKNOWN:** hosting credentials and authenticated organizer submission access.
 - **NOT TESTED:** successful live model inference, Mozaik Cloud and deployment. The local fictional browser flow and server transport are tested; arbitrary/private-data ingestion intentionally remains unavailable.
 - **TIME RISK:** the current verified deadline is October 31 at 20:00 CET; the plan must prioritize runtime proof and the text-first fixture over PDF/image extraction.
 
 ## Next action
 
-T006: complete the remaining Phase 10 acceptance cases required for the submitted scope, verify production-host lifecycle compatibility, run clean-install/security/accessibility checks from the committed SHA, and only then deploy and audit the authenticated submission channels. Do not resume Gemini debugging or add OCR, banking or authentication complexity.
+Finish the external portion of T006: publish the final commit to the confirmed public repository, authenticate to Render and deploy the committed blueprint, smoke-test a fresh public session, then complete the organizer form and preserve its receipt. Do not claim those steps before their real evidence exists.
 
 ## Completion statement
 
-T001 passes its deterministic SDK-integration scope. T002 passes its bounded-ingestion, structured-output, validation, failure-boundary and deterministic Mozaik regression scope. T002D live extraction remains **BLOCKED** after final HTTP 503 responses. T003 passes its deterministic finance and runtime-integration scope with acceptance cases A, C, F, H and K. T004 passes its deterministic dual-projection and explanation scope with focused acceptance cases G, I and Q. T005 passes its local fictional frontend/API/browser scope with authentic Mozaik runtime evidence and deterministic review recalculation. Unequal split coverage, persistence, deployment and the remaining A–Q end-to-end matrix are incomplete. The product is **not deployed or submission-ready**.
+T001–T005 pass their recorded deterministic/local scopes. T002D live extraction remains **BLOCKED** after final HTTP 503 responses. T006 adds a clean-checkout pass, 49 passing tests, focused A/C–Q coverage, security/dependency checks, a passing Chrome journey and a free-host blueprint. Unequal-split case B, persistence, production deployment, authenticated form access and submission receipt remain incomplete. The product is **locally release-ready but not yet deployed or submitted**.
 
