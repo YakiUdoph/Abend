@@ -12,7 +12,7 @@ Updated: **2026-10-30**
 **T004 evidence explanations and dual financial views: UNIT/SDK INTEGRATION PASS; focused acceptance cases G, I and Q pass.**  
 **T005 premium frontend and complete fictional demonstration: LOCAL BROWSER PASS.**  
 **T006 release audit: PARTIAL PASS; clean checkout, security, A/C–Q focused coverage and browser verification pass; B remains unsupported.**
-**Product application: LOCAL FICTIONAL FLOW WORKING; PUBLICATION/DEPLOYMENT/SUBMISSION NOT YET COMPLETE.**
+**Product application: LOCAL FICTIONAL FLOW WORKING AND PUBLIC REPOSITORY PUBLISHED; DEPLOYMENT/SUBMISSION NOT YET COMPLETE.**
 
 The local fictional application now runs the full evidence, investigation, review, dual-projection, citation and verification journey. It does not expose arbitrary/private-data ingestion, deployment, OCR, authentication, bank connection, payment initiation or successful live-provider extraction.
 
@@ -47,7 +47,7 @@ The local fictional application now runs the full evidence, investigation, revie
 | Mozaik Cloud evidence | NOT TESTED | SDK reported telemetry disabled because `MOZAIK_API_KEY` is absent |
 | T006 combined tests | UNIT/API/BROWSER PASS | 49 passed, 0 failed; proof and Chrome journey passed on 2026-10-30 |
 | Full acceptance matrix | PARTIAL / NOT COMPLETE | Focused automated coverage passes A and C–Q; unequal-split case B is not implemented; these are not all browser journeys |
-| Public repository | VERIFIED / NOT YET PUSHED | `https://github.com/YakiUdoph/Abend` exists, is public, and matches local `origin`; remote publication awaits the final commit |
+| Public repository | VERIFIED / PUBLISHED | `https://github.com/YakiUdoph/Abend` is public, matches local `origin`, and exposes the verified release commit |
 | Hosting | PREPARED / NOT DEPLOYED | Render free-service blueprint and health route are present; no authenticated Render session is available |
 | Submission | NOT SUBMITTED | Public rules rechecked; authenticated dashboard/form and private organizer channels are unavailable |
 
@@ -206,9 +206,9 @@ T002C verification executed on 2026-10-30:
 
 ## Next action
 
-Finish the external portion of T006: publish the final commit to the confirmed public repository, authenticate to Render and deploy the committed blueprint, smoke-test a fresh public session, then complete the organizer form and preserve its receipt. Do not claim those steps before their real evidence exists.
+Finish the external portion of T006: authenticate to Render and deploy the committed blueprint, smoke-test a fresh public session, then complete the organizer form and preserve its receipt. Do not claim those steps before their real evidence exists.
 
 ## Completion statement
 
-T001–T005 pass their recorded deterministic/local scopes. T002D live extraction remains **BLOCKED** after final HTTP 503 responses. T006 adds a clean-checkout pass, 49 passing tests, focused A/C–Q coverage, security/dependency checks, a passing Chrome journey and a free-host blueprint. Unequal-split case B, persistence, production deployment, authenticated form access and submission receipt remain incomplete. The product is **locally release-ready but not yet deployed or submitted**.
+T001–T005 pass their recorded deterministic/local scopes. T002D live extraction remains **BLOCKED** after final HTTP 503 responses. T006 adds a clean-checkout pass, 49 passing tests, focused A/C–Q coverage, security/dependency checks, a passing Chrome journey, a public repository and a free-host blueprint. Unequal-split case B, persistence, production deployment, authenticated form access and submission receipt remain incomplete. The product is **publicly reproducible but not yet deployed or submitted**.
 

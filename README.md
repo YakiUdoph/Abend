@@ -131,7 +131,7 @@ See `PROGRESS.md` for the latest executed counts, authentic loop evidence and li
 
 ## Public release and hosting
 
-The intended public repository is [YakiUdoph/Abend](https://github.com/YakiUdoph/Abend). The repository is the canonical source for the fictional demonstration and its reproducibility evidence.
+The public repository is [YakiUdoph/Abend](https://github.com/YakiUdoph/Abend). The repository is the canonical source for the fictional demonstration and its reproducibility evidence.
 
 `render.yaml` describes a free Render web service with the production build, start command and `/health` check. Abend deliberately keeps each demonstration run in one server process; on Render's free service, a cold start or service restart clears those in-memory runs. A fresh demonstration can then be started normally. No hosting account or payment method is required by the application itself, and no secrets are required for demonstration mode.
 

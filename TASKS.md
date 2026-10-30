@@ -126,7 +126,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Phase 12 — Audit submission requirements and submit
 
-**T006 status: PARTIAL / NOT SUBMITTED (2026-10-30).** The intended `YakiUdoph/Abend` repository exists publicly and the local `origin` matches it. Public rules and the Freestyle brief were rechecked. The authenticated organizer dashboard, private announcements and submission form are unavailable in this environment; no receipt is claimed.
+**T006 status: PARTIAL / NOT SUBMITTED (2026-10-30).** `YakiUdoph/Abend` is public, the verified release commit is published, and local `origin` matches it. Public rules and the Freestyle brief were rechecked. The authenticated organizer dashboard, private announcements and submission form are unavailable in this environment; no receipt is claimed.
 
 - **Objective:** complete Freestyle submission before the current 20:00 CET deadline.
 - **Dependencies:** account/registration; public repo; final official dashboard/Discord/email check.
@@ -161,5 +161,5 @@ Release status: **A and C–Q PASS in focused automated coverage; B NOT IMPLEMEN
 
 ## Exact next implementation task
 
-**T006 continuation — authenticated external release steps.** Push the verified release commit to the confirmed public remote, deploy the committed Render blueprint from the repository, run a public clean-session smoke test, and submit through the authenticated organizer dashboard. Record the real deployment URL and submission receipt only after those external steps succeed. Case B remains an explicit product limitation unless the validated domain contract is deliberately expanded and tested.
+**T006 continuation — authenticated external release steps.** Deploy the committed Render blueprint from the public repository, run a public clean-session smoke test, and submit through the authenticated organizer dashboard. Record the real deployment URL and submission receipt only after those external steps succeed. Case B remains an explicit product limitation unless the validated domain contract is deliberately expanded and tested.
 
