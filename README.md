@@ -83,13 +83,13 @@ The core product uses a deterministic inference runner inside genuine Mozaik age
 
 ## Release status
 
-The repository has a Render blueprint, but T008 is not claimed as deployed or pushed until those external actions and public smoke tests actually occur. The hackathon entry has not been submitted.
+T008 is pushed to the public repository and deployed at [abend.onrender.com](https://abend.onrender.com). A public fictional new-input smoke test verified distinct overlapping Mozaik loops, both investigator finding events, reconciliation updates, and exact-share balances. Render free-service restarts still clear all in-memory runs. The hackathon entry has not been submitted.
 
 Still unavailable:
 
 - free-form natural-language extraction, OCR, or PDF/image extraction;
 - ratio or receipt-itemized split entry (exact unequal shares are supported);
 - durable storage, authenticated identities, retention/deletion controls, and multi-device sessions;
-- successful live-model inference, production deployment verification, and submission receipt.
+- successful live-model inference, durable production storage, and submission receipt.
 
 The public repository is [YakiUdoph/Abend](https://github.com/YakiUdoph/Abend). Official competition requirements and current limitations are tracked in `RULES.md`, `TASKS.md`, and `PROGRESS.md`.

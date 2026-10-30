@@ -1,6 +1,6 @@
 # ABEND Build Plan
 
-Status: **T001–T005 recorded PASS; T006 external release PARTIAL; T008 real-input local implementation and verification PASS, committed; push/deployment NOT STARTED**
+Status: **T001–T005 recorded PASS; T006 external submission PARTIAL; T008 real-input implementation PASS, pushed and publicly smoke-tested; submission NOT STARTED**
 
 The order is deliberate. A phase advances only when its acceptance criteria and evidence exist. File paths below are proposed and may be refined after Phase 1, but changes must preserve separation between evidence extraction and arithmetic.
 
@@ -145,7 +145,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 - Per-run capability tokens protect review mutations; request limits and investigation rate limits are enforced.
 - Three non-fixture scenarios cover unequal USD shares, pending EUR repayment review, and duplicate GBP repayments.
 - `npm.cmd run typecheck`, `npm.cmd test`, `npm.cmd run build`, `npm.cmd run proof`, `npm.cmd run test:browser`, and `git diff --check` pass in the working tree. The recorded automated count is 53 passed, 0 failed.
-- This T008 commit records the verified implementation; the final report uses `git rev-parse HEAD` for its immutable identifier. Push, Render deployment, public smoke test, and hackathon submission were not yet performed. T008 explicitly forbids submission at this stage.
+- The T008 implementation was pushed to `origin/main` and `https://abend.onrender.com` passed health and fictional new-input smoke tests. The final report uses `git rev-parse HEAD` for the immutable repository identifier. Hackathon submission was not performed; T008 explicitly forbids it at this stage.
 
 ## Required acceptance matrix
 

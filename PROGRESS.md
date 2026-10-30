@@ -25,7 +25,9 @@ Executed commands and real results:
 Release truth:
 
 - T008 is recorded by the commit containing this entry (`feat: add Mozaik-first real-input workspace`); the final report uses `git rev-parse HEAD` for its immutable identifier.
-- Push, Render deployment, public smoke testing, and hackathon submission were not yet performed.
+- Commit `09b3dfbd95d6c36e7cf1f2f748320e1ba36da5d1` was pushed to `origin/main`; the documentation commit containing this production evidence may have a later SHA, which the final report obtains with `git rev-parse HEAD`.
+- `https://abend.onrender.com/health` returned `{"status":"ok","service":"abend","mode":"WORKSPACE"}`. A fictional ProdA/ProdB EUR 80.00 exact-share investigation returned run `fbd7d868-948e-44f5-9539-55257e629151`, distinct loops `bc80b18a-eb2e-48b3-b603-e98848c9c88c` and `feda9627-7ee9-4cd7-8731-694d9f146c6c`, **31 ms** overlap, one finding from each investigator, two reconciliation updates, and balances ProdA `+5000`, ProdB `-5000` minor units. This verifies public new-input execution without claiming durable persistence.
+- Hackathon submission was not performed.
 - Successful external-provider inference, durable persistence, authenticated identities, OCR/PDF extraction, and free-form natural-language extraction remain unavailable.
 
 ## Outcome
