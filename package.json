@@ -1,0 +1,25 @@
+{
+  "name": "abend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:test": "tsc -p tsconfig.build.json",
+    "dev": "npm run build --silent && node dist/src/server/app.js",
+    "start": "node dist/src/server/app.js",
+    "proof": "npm run build:test --silent && node dist/src/proof.js",
+    "proof:live": "npm run build:test --silent && node --env-file-if-exists=.env.local dist/src/live-proof.js",
+    "test:browser": "npm run build --silent && node tests/browser/journey.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build:test --silent && node --test dist/tests/**/*.test.js"
+  },
+  "dependencies": {
+    "@mozaik-ai/core": "4.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.0",
+    "typescript": "5.9.3",
+    "ws": "8.22.0"
+  }
+}

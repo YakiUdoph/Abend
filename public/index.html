@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Abend reconstructs shared-expense balances from supplied evidence and shows what still needs confirmation.">
+    <title>Abend — Settle the numbers. Keep the friendship.</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+    <script type="module" src="/assets/app.js"></script>
+  </head>
+  <body data-run-state="idle">
+    <a class="skip-link" href="#main-content">Skip to the demonstration</a>
+    <header class="site-header">
+      <a class="wordmark" href="#top" aria-label="Abend home">ABEND<span>.</span></a>
+      <nav aria-label="Primary navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#demo">Fictional demo</a>
+        <button class="text-button" id="verification-nav" type="button" disabled>Verification</button>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <p class="eyebrow">Evidence-based expense reconciliation</p>
+        <h1 id="hero-title">Settle the numbers.<br><em>Keep the friendship.</em></h1>
+        <p class="hero-copy">Abend reconstructs a shared-expense balance from the conversation and payment records you supply—then shows exactly what the evidence supports and what still needs a human decision.</p>
+        <div class="hero-actions">
+          <button class="button button-primary" id="open-demo" type="button">Open the fictional demonstration</button>
+          <a class="button button-secondary" href="#how-it-works">See how it works</a>
+        </div>
+        <div class="mode-grid" aria-label="Available execution modes">
+          <article class="mode-card mode-active">
+            <div><span class="status-dot" aria-hidden="true"></span><strong>Demonstration mode</strong></div>
+            <p>Available · fictional evidence · deterministic Mozaik runner</p>
+          </article>
+          <article class="mode-card mode-blocked">
+            <div><span class="status-mark" aria-hidden="true">×</span><strong>Live investigation</strong></div>
+            <p>Unavailable · provider-backed findings remain unverified</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="principles" id="how-it-works" aria-labelledby="principles-title">
+        <div class="section-heading">
+          <p class="eyebrow">A calm path through disputed records</p>
+          <h2 id="principles-title">Evidence first. Arithmetic second. People decide.</h2>
+        </div>
+        <ol class="principle-list">
+          <li><span>01</span><div><h3>Read the record</h3><p>Two investigators check agreements and repayments at the same time.</p></div></li>
+          <li><span>02</span><div><h3>Keep uncertainty visible</h3><p>Initiated transfers and unsupported expenses stay outside the total.</p></div></li>
+          <li><span>03</span><div><h3>Recalculate transparently</h3><p>Your decisions are recorded, validated, and applied by the deterministic engine.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="demo-shell" id="demo" hidden aria-labelledby="demo-title">
+        <header class="demo-header">
+          <div>
+            <p class="eyebrow">FICTIONAL TEST DATA</p>
+            <h2 id="demo-title">The Alex, Bea &amp; Chen trip</h2>
+            <p>This bounded demonstration uses invented records only. It does not accept private conversations or arbitrary uploads.</p>
+          </div>
+          <span class="mode-badge">Demonstration mode</span>
+        </header>
+
+        <ol class="journey-steps" aria-label="Demonstration steps">
+          <li data-step="evidence" aria-current="step"><span>1</span> Evidence</li>
+          <li data-step="investigation"><span>2</span> Investigation</li>
+          <li data-step="review"><span>3</span> Review</li>
+          <li data-step="balances"><span>4</span> Balances</li>
+          <li data-step="message"><span>5</span> Friendly message</li>
+        </ol>
+
+        <section class="workspace-section" aria-labelledby="evidence-title">
+          <div class="section-heading compact">
+            <p class="step-label">Step 1 · inspect the supplied record</p>
+            <h3 id="evidence-title">Source evidence</h3>
+          </div>
+          <div id="evidence-list" class="evidence-grid" aria-live="polite"></div>
+          <div class="privacy-note"><strong>Privacy boundary</strong><span>This demo is locked to fictional test data. Live analysis and private-data ingestion are unavailable.</span></div>
+          <button class="button button-primary work-button" id="start-investigation" type="button">Work it out</button>
+        </section>
+
+        <section class="workspace-section" id="investigation-section" aria-labelledby="investigation-title">
+          <div class="section-heading compact">
+            <p class="step-label">Step 2 · actual runtime work</p>
+            <h3 id="investigation-title">Investigation</h3>
+          </div>
+          <div id="investigation-empty" class="empty-state">Start the demonstration to run the Agreement and Payment investigators.</div>
+          <div id="investigation-loading" class="loading-state" hidden role="status">
+            <span class="spinner" aria-hidden="true"></span>
+            <div><strong>Investigation request is running</strong><p>No percentage or completion time is invented. Authentic events appear when the runtime returns them.</p></div>
+          </div>
+          <div id="investigation-error" class="error-state" hidden role="alert"></div>
+          <div id="investigation-results" hidden>
+            <div id="agent-list" class="agent-grid"></div>
+            <div id="overlap-summary" class="overlap-summary"></div>
+          </div>
+        </section>
+
+        <section class="workspace-section" id="findings-section" hidden aria-labelledby="findings-title">
+          <div class="section-heading compact">
+            <p class="step-label">Step 3 · review what Abend found</p>
+            <h3 id="findings-title">Evidence-backed findings</h3>
+          </div>
+          <div id="findings-list" class="finding-list"></div>
+        </section>
+
+        <section class="workspace-section review-layout" id="review-section" hidden aria-labelledby="review-title">
+          <div>
+            <div class="section-heading compact">
+              <p class="step-label">Step 4 · resolve the uncertain transfer</p>
+              <h3 id="review-title">Human review</h3>
+            </div>
+            <div id="review-card" class="review-card"></div>
+            <div id="review-error" class="error-state" hidden role="alert"></div>
+          </div>
+          <aside class="decision-panel" aria-labelledby="decision-history-title">
+            <h4 id="decision-history-title">Decision history</h4>
+            <p class="small-note">The runtime participant ID is recorded. The reviewer’s real-world identity is not authenticated.</p>
+            <ol id="decision-history" class="decision-list"></ol>
+          </aside>
+        </section>
+
+        <section class="workspace-section" id="balances-section" hidden aria-labelledby="balances-title">
+          <div class="section-heading compact">
+            <p class="step-label">Step 5 · compare the actual projections</p>
+            <h3 id="balances-title">Supported balances</h3>
+          </div>
+          <div class="projection-grid">
+            <article class="projection-card">
+              <div class="projection-heading"><span>01</span><div><h4>From the evidence</h4><p>Before reviewer decisions</p></div></div>
+              <div id="evidence-balances" class="balance-list"></div>
+              <details><summary>How this was calculated</summary><div id="evidence-terms" class="term-list"></div></details>
+            </article>
+            <article class="projection-card projection-confirmed">
+              <div class="projection-heading"><span>02</span><div><h4>After confirmations</h4><p>Includes valid review decisions</p></div></div>
+              <div id="confirmed-balances" class="balance-list"></div>
+              <details><summary>How this was calculated</summary><div id="confirmed-terms" class="term-list"></div></details>
+            </article>
+          </div>
+        </section>
+
+        <section class="workspace-section message-layout" id="message-section" hidden aria-labelledby="message-title">
+          <div class="section-heading compact">
+            <p class="step-label">Step 6 · leave with respectful words</p>
+            <h3 id="message-title">Friendly message</h3>
+            <p>Generated from the accepted structured result. Abend never sends it.</p>
+          </div>
+          <label for="friendly-message">Editable draft</label>
+          <textarea id="friendly-message" rows="6"></textarea>
+          <button class="button button-secondary" id="copy-message" type="button">Copy message</button>
+          <span id="copy-status" class="small-note" role="status"></span>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong>ABEND.</strong> Settle the numbers. Keep the friendship.</p>
+      <p>Local fictional demonstration · no bank access · no payment initiation</p>
+    </footer>
+
+    <dialog id="verification-dialog" aria-labelledby="verification-title">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Technical verification</p><h2 id="verification-title">Authentic runtime evidence</h2></div>
+        <button class="icon-button" id="close-verification" type="button" aria-label="Close verification view">×</button>
+      </div>
+      <p class="redaction-note">This view contains sanitized runtime metadata and fictional evidence identifiers. It never invents missing trace rows.</p>
+      <div id="run-manifest"></div>
+      <h3>Event timeline</h3>
+      <ol id="event-timeline" class="timeline"></ol>
+    </dialog>
+  </body>
+</html>
