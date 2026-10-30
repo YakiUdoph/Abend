@@ -173,5 +173,5 @@ T008 superseding status: **A–Q PASS in focused automated coverage; B now passe
 
 ## Exact next implementation task
 
-**T009 — final verification, competition audit and release preparation.** Finish the clean-install and public fresh-browser checks against the final commit, reconcile release documentation, and prepare the presentation-video handoff. Do not submit the hackathon entry or claim a submission receipt during T009.
+**T009 status: PASS — READY FOR PRESENTATION VIDEO (2026-10-30).** Record the presentation video against the verified public flow, then complete the organizer submission only when separately authorized. Do not claim durable persistence, authenticated identities, provider-backed extraction, OCR/PDF support or a submission receipt.
 

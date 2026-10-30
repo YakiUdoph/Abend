@@ -2,9 +2,13 @@
 
 Updated: **2026-10-30**
 
-## T009 final verification — IN PROGRESS
+## T009 final verification — PASS
 
-Verified so far on 2026-10-30: release-blocker fixes add explicit repayment rejection/reversal, capability-protected run deletion, 30-minute in-process expiry, independent-session checks, and broader real-input arithmetic coverage. `npm.cmd run typecheck`, `npm.cmd test` (56 passed), `npm.cmd run build`, `npm.cmd run proof`, `npm.cmd run test:browser`, `npm.cmd audit` (0 vulnerabilities), and `git diff --check` pass locally. The browser journey uses new Mira/Niko/Ola records, exercises confirm/reverse/reject, citations, copy, runtime inspection, deletion/reset, anchors, accessibility, and 1280/768/390 px overflow. Clean-install and final public-deployment verification are still pending; no final readiness decision is recorded yet.
+Verified on 2026-10-30: release-blocker fixes add explicit repayment rejection/reversal, capability-protected run deletion, 30-minute in-process expiry, independent-session checks, and broader real-input arithmetic coverage. `npm.cmd run typecheck`, `npm.cmd test` (56 passed), `npm.cmd run build`, `npm.cmd run proof`, `npm.cmd run test:browser`, `npm.cmd audit` (0 vulnerabilities), and `git diff --check` pass locally. A separate clone of implementation commit `78eec8e3b3996c1f857d92f402e5dcfdf8f294e4` passed `npm.cmd ci --ignore-scripts`, typecheck, all 56 tests, build, proof, browser verification and clean Git checks.
+
+The same commit was pushed to `origin/main` and Render served the new 19,423-byte client bundle. A fresh public Chrome run at `https://abend.onrender.com` used new Mira/Niko/Ola records and passed confirm, reverse and reject decisions, citations, summary copy, runtime inspection, capability-protected deletion/reset, anchor checks, accessibility, and 1280/768/390 px no-overflow checks. Agreement loop `5ded8e5b-6415-4863-8a6c-c266018428c0` and Payment loop `6e5ec537-7c9c-44b8-bd3b-39f94e2a26d6` overlapped by **32 ms**; 27 authentic runtime/domain events were rendered. The submission form was not opened or submitted.
+
+**T009 decision: READY FOR PRESENTATION VIDEO.** Remaining limitations are explicit and non-blocking for the bounded text-first MVP: in-process rather than durable storage, capability tokens rather than authenticated identities, no cross-device recovery, no OCR/PDF or free-form provider extraction, and no successful live-model inference.
 
 ## T008 real-input implementation — local and public PASS (historical baseline)
 
@@ -238,9 +242,9 @@ T002C verification executed on 2026-10-30:
 
 ## Next action
 
-Complete T009 against the final commit: isolated clean install, push, wait for Render auto-deployment, run the public fresh-browser journey, record final SHA/results, and decide presentation-video readiness. Do not submit the organizer form during T009.
+Record the presentation video against the verified public flow, then separately complete the organizer submission when authorized. Do not describe provider-backed extraction, durable storage, authenticated identities, OCR/PDF or submission as complete.
 
 ## Completion statement
 
-T001–T005 pass their recorded scopes. T002D live extraction remains **BLOCKED** after HTTP 503 responses. T008 added exact unequal shares, bounded real-input use and a verified public Render deployment. T009 is still in progress until the final clean-install and post-deployment public browser checks complete. Durable persistence, authenticated identities, free-form provider extraction and a submission receipt remain unavailable; the hackathon entry has not been submitted.
+T001–T005 pass their recorded scopes. T002D live extraction remains **BLOCKED** after HTTP 503 responses. T008 added exact unequal shares and bounded real-input use. T009 passed clean-install, security, arithmetic/provenance, genuine-concurrency, responsive browser and post-deployment public verification. The product is **READY FOR PRESENTATION VIDEO** within its documented scope. Durable persistence, authenticated identities, free-form provider extraction and a submission receipt remain unavailable; the hackathon entry has not been submitted.
 

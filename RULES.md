@@ -1,6 +1,6 @@
 # ABEND Rules, Verified Facts and Guardrails
 
-Status date: **2026-10-30**. Competition facts are time-sensitive; recheck the official dashboard, Discord and email immediately before implementation and submission.
+Status date: **2026-10-30**. Public rules, event page and Freestyle brief were rechecked during T009 with no material public change found. Competition facts are time-sensitive; recheck the authenticated dashboard, Discord and email immediately before submission.
 
 ## Status vocabulary
 
@@ -40,7 +40,7 @@ The official rules state material operational changes may be announced through t
 
 **VERIFIED from official documentation/package metadata:** Mozaik is a TypeScript runtime; `@mozaik-ai/core` is the required package; current indexed package version is 4.0.6; concurrent `runLoop` calls are fire-and-forget; participants communicate via semantic events and share a typed `RuntimeState`.
 
-**NOT TESTED locally:** installation, actual exported types, provider compatibility, event payloads, Cloud setup, trace persistence, hosting behavior and credentials.
+**VERIFIED locally:** installed 4.0.6 exports/types, participant lifecycle, concurrent `runLoop` IDs/windows, semantic event payloads, shared-state reconciliation and public Render hosting. **NOT TESTED:** successful provider-backed findings, Mozaik Cloud telemetry/trace persistence and authenticated organizer credentials.
 
 Official sources:
 
@@ -111,7 +111,7 @@ Official sources:
 - Redact sensitive evidence from public traces and logs.
 - Do not commit `.env`, keys, raw private conversations or customer records.
 - Use fictional, clearly labeled fixtures in tests and demos.
-- Add authorization, retention and deletion behavior before inviting real user data.
+- Keep capability authorization, bounded retention and deletion behavior enabled before inviting user-entered records; durable identity authentication remains unavailable and must be disclosed.
 
 ## Competitor research boundaries
 
