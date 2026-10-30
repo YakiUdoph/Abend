@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/abend-logo.png" width="180" alt="Official Abend logo">
+</p>
+
 # Abend
 
 **Settle the numbers. Keep the friendship.**

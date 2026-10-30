@@ -10,6 +10,12 @@ Updated: **2026-10-30**
 - **SUBMISSION:** NOT COMPLETED
 - **Production:** `https://abend.onrender.com`
 
+**T011 branding status:** LOCAL PASS / PUBLIC DEPLOYMENT PENDING.
+
+The exact user-supplied `public/abend-logo.png` was inspected as a 1300 × 1210, 32-bit ARGB PNG with real transparency (alpha range 0–255) and retained unchanged as the official source. Its visible bounds are 1206 × 1145 at x=33, y=27. Deterministic, aspect-preserving derivatives now provide 16 × 16 and 32 × 32 PNG favicons, a two-size ICO, and a 180 × 180 Apple touch icon. The existing wordmark remains beside the logo; the README, design record, browser metadata, and social metadata use the same source.
+
+Local verification on 2026-10-30 passed: `npm.cmd run typecheck`; `npm.cmd test` (**56 passed, 0 failed**); `npm.cmd run build`; `npm.cmd run test:browser`; and `git diff --check` (line-ending notices only). The fresh Chrome journey fetched all five brand assets with HTTP 200 and the expected content types, verified the logo's 1300 × 1210 intrinsic dimensions and preserved ratio, found no unnamed buttons, and found no overflow at 1280, 768, or 390 px. The journey also completed the existing financial review flow with 27 authentic events and 42 ms of observed overlap between distinct Agreement and Payment loops. Push and public-deployment verification remain pending and are not yet claimed.
+
 T009 reported 56 passing automated tests, a passing public browser journey, genuine concurrent Mozaik execution with 32 ms observed Agreement/Payment overlap, 27 authentic runtime/domain events, zero npm audit vulnerabilities, and verified public deployment. These are dated T009 facts and are not relabeled as T010 executions.
 
 ## T010 judge-ready documentation — PASS

@@ -191,6 +191,18 @@ export function createAbendServer() {
         await serveFile(response, resolve(projectRoot, "dist/src/web/client.js"), "text/javascript; charset=utf-8");
         return;
       }
+      const brandAssets: Record<string, { file: string; contentType: string }> = {
+        "/abend-logo.png": { file: "abend-logo.png", contentType: "image/png" },
+        "/favicon-32x32.png": { file: "favicon-32x32.png", contentType: "image/png" },
+        "/favicon-16x16.png": { file: "favicon-16x16.png", contentType: "image/png" },
+        "/apple-touch-icon.png": { file: "apple-touch-icon.png", contentType: "image/png" },
+        "/favicon.ico": { file: "favicon.ico", contentType: "image/x-icon" },
+      };
+      const brandAsset = brandAssets[url.pathname];
+      if (request.method === "GET" && brandAsset) {
+        await serveFile(response, resolve(projectRoot, `public/${brandAsset.file}`), brandAsset.contentType);
+        return;
+      }
       if (request.method === "GET" && url.pathname === "/api/demo") {
         sendJson(response, 200, {
           mode: {

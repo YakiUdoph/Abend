@@ -78,6 +78,7 @@ This view proves Mozaik execution while keeping the primary product understandab
 
 ## Visual system
 
+- `public/abend-logo.png` is the official Abend logo and the sole source for the header mark, README branding, favicon derivatives, Apple touch icon, and social-sharing image. The source artwork is never redrawn, stretched, cropped, or replaced by generated imagery.
 - Warm paper background and near-black typography keep the product serious without feeling punitive.
 - Deep emerald signals trust and active structure; amber highlights focus and review without implying guilt.
 - Serif display headings give the product an editorial, human quality.

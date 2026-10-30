@@ -1,6 +1,6 @@
 # ABEND Build Plan
 
-Status: **T001–T005 PASS in their recorded scopes; T006 PARTIAL; T007 BLOCKED; T008 IMPLEMENTED; T009 RELEASE VERIFICATION PASS; T010 DOCUMENTATION PASS; submission NOT STARTED**
+Status: **T001–T005 PASS in their recorded scopes; T006 PARTIAL; T007 BLOCKED; T008 IMPLEMENTED; T009 RELEASE VERIFICATION PASS; T010 DOCUMENTATION PASS; T011 LOCAL PASS / PUBLIC DEPLOYMENT PENDING; submission NOT STARTED**
 
 ## Current status summary
 
@@ -16,6 +16,7 @@ Status: **T001–T005 PASS in their recorded scopes; T006 PARTIAL; T007 BLOCKED;
 | T008 | **PASS** — empty-by-default structured real-input product implemented, pushed, and publicly deployed |
 | T009 | **PASS** — clean-install, security, arithmetic/provenance, concurrency, responsive browser, and public deployment verification passed |
 | T010 | **PASS** — judge-facing repository documentation reconciled with the implementation and full required verification passed |
+| T011 | **LOCAL PASS / PUBLIC PENDING** — exact supplied logo, deterministic favicon derivatives, metadata, documentation, and responsive browser verification pass; push/deployment verification remains |
 
 Later tasks supersede current product status where explicitly stated, but they do not rewrite the evidence or limitations recorded by earlier tasks.
 
@@ -195,4 +196,8 @@ T008 superseding status: **A–Q PASS in focused automated coverage; B now passe
 **Status: PASS (2026-10-30).** The public README and seven governance documents were reconciled with the shipped implementation, historical evidence was preserved, official public rules were rechecked, Markdown integrity checks passed, and the full required typecheck/test/build/proof/browser/diff verification passed. No application behavior was modified; no presentation video or hackathon submission was created.
 
 After T010 passes, the next authorized product-facing action is to record the presentation video against the verified public flow. Organizer submission remains a separate action requiring an authenticated-channel recheck and explicit authorization. Do not claim durable persistence, authenticated identities, provider-backed extraction, OCR/PDF support, or a submission receipt.
+
+## T011 — Official logo and favicon integration
+
+**Status: LOCAL PASS / PUBLIC DEPLOYMENT PENDING (2026-10-30).** The exact user-supplied `public/abend-logo.png` is the sole official logo source and remains unchanged. It is integrated into the existing header and README; only the required favicon/touch derivatives were created mechanically; accurate social metadata is present; and typecheck, 56 tests, build, responsive/accessibility browser verification, and diff checks pass locally. Push and public-deployment verification remain before final PASS. Financial and Mozaik behavior were not changed, artwork was not generated or redesigned, and the hackathon entry was not submitted.
 
