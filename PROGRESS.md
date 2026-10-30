@@ -2,6 +2,32 @@
 
 Updated: **2026-10-30**
 
+## T008 real-input implementation — local PASS / external release NOT STARTED
+
+Implemented and verified on 2026-10-30:
+
+- The normal product path starts empty and accepts new participant names, EUR/USD/GBP/JPY, expenses, payer, exact participant shares, repayments/statuses, and optional bounded conversation evidence. Records can be added, edited, removed, or cleared. The fictional sample is optional and labeled.
+- Structured records become immutable `EXPENSE_RECORD`, `PAYMENT_RECORD`, and `CONVERSATION` sources with resolvable citations. Deterministic record validation is not described as natural-language or model inference.
+- Every investigation launches distinct Agreement and Payment `@mozaik-ai/core` runLoops concurrently. Both receive the current packet; validated semantic events update genuine shared state and materially drive reconciliation.
+- Exact unequal shares use integer minor units and must sum to the expense. Duplicate repayment fingerprints are conservatively excluded from double counting. Initiated/claimed/recorded-received repayments remain confirmation-gated.
+- Server boundaries now include a 32 KiB request limit, bounded record counts and text lengths, strict money/name/status/currency validation, a per-address investigation-start limit, CSP/text-node rendering, and an unguessable per-run capability token for review mutations. Application code does not log raw conversations.
+- Typography was reduced approximately 10%, record spacing was adjusted, inactive fixture-only navigation was replaced, and the journey now follows enter records → investigate → review evidence → resolve → balances.
+
+Executed commands and real results:
+
+- `npm.cmd run typecheck`: exit 0.
+- `npm.cmd test`: **53 passed, 0 failed**. This includes three non-fixture scenarios: unequal USD cabin shares, a pending EUR grocery repayment changed by two reviewer decisions, and duplicate GBP ticket repayments applied once.
+- `npm.cmd run build`: exit 0 (also executed by the browser command).
+- `npm.cmd run proof`: exit 0. Agreement participant `b586b697-c3ec-4918-a4ef-837c639b1fe9`, loop `1e0719a1-e7d9-458c-85ae-4787cb533d08`; Payment participant `cb923db2-e1dd-4e29-bcf5-5fcefc168094`, loop `27b0f6c5-ba99-43ca-8d51-5b9eb69e34a9`; observed overlap **27 ms**. Payment finding arrived first, then Agreement finding; reconciliation updates recorded first payment-only and then combined shared-state IDs.
+- `npm.cmd run test:browser`: exit 0 in headless Chrome. A new Mira/Niko/Ola USD scenario produced distinct loops with **37 ms** overlap and 23 runtime/domain events. Review changed Niko from USD 40.00 to USD 25.00 outstanding while Ola remained USD 60.00. Keyboard skip navigation, reduced motion, accessible button names, and 390 px no-overflow checks passed.
+- `git diff --check`: exit 0; line-ending notices are warnings only.
+
+Release truth:
+
+- T008 is recorded by the commit containing this entry (`feat: add Mozaik-first real-input workspace`); the final report uses `git rev-parse HEAD` for its immutable identifier.
+- Push, Render deployment, public smoke testing, and hackathon submission were not yet performed.
+- Successful external-provider inference, durable persistence, authenticated identities, OCR/PDF extraction, and free-form natural-language extraction remain unavailable.
+
 ## Outcome
 
 **Pre-build specification migration: COMPLETE.**  

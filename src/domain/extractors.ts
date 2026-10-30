@@ -25,6 +25,34 @@ export function extractAgreements(packet: EvidencePacket): AgreementFinding[] {
   const spans = packet.sources.flatMap((source) => source.spans);
   const findings: AgreementFinding[] = [];
 
+  for (const source of packet.sources.filter(({ evidenceType }) => evidenceType === "EXPENSE_RECORD")) {
+    const values = Object.fromEntries(source.spans.map((span) => {
+      const separator = span.text.indexOf(":");
+      return separator < 0 ? [span.text, ""] : [span.text.slice(0, separator), span.text.slice(separator + 1).trim()];
+    }));
+    const money = /^(?<currency>[A-Z]{3}) (?<amount>\d+(?:\.\d+)?)$/.exec(values.Amount ?? "");
+    const shares = (values.Shares ?? "").split(" | ").filter(Boolean).map((entry) => {
+      const separator = entry.lastIndexOf("=");
+      return { participant: entry.slice(0, separator), amount: entry.slice(separator + 1) };
+    });
+    if (!values.Expense || !values.Payer || values.Split !== "EXACT" || !money?.groups?.currency || !money.groups.amount || shares.length < 2 || shares.some(({ participant, amount }) => !participant || !amount)) continue;
+    const amountMinor = toMinorUnits(money.groups.amount, money.groups.currency);
+    findings.push({
+      kind: "agreement",
+      id: stableId("agreement", [source.id, values.Payer, money.groups.currency, amountMinor]),
+      expenseLabel: values.Expense.toLowerCase(),
+      payer: values.Payer,
+      participants: shares.map(({ participant }) => participant),
+      amountMinor,
+      currency: money.groups.currency,
+      split: "EXACT",
+      shares: shares.map(({ participant, amount }) => ({ participant, amountMinor: toMinorUnits(amount, money.groups!.currency!) })),
+      status: "DOCUMENTED_CLAIM",
+      uncertainty: "The submitted structured record explicitly allocates these shares; it is not independently verified.",
+      citations: source.spans.map(citation),
+    });
+  }
+
   for (const paymentSpan of spans) {
     const expense = /^(?<payer>[A-Za-z]+):\s+I paid (?<currency>[A-Z]{3}) (?<amount>\d+(?:\.\d{1,2})?) for (?:the )?(?<label>accommodation)\.$/i.exec(
       paymentSpan.text,
@@ -71,6 +99,29 @@ export function extractAgreements(packet: EvidencePacket): AgreementFinding[] {
 export function extractPayments(packet: EvidencePacket): PaymentFinding[] {
   const spans = packet.sources.flatMap((source) => source.spans);
   const findings: PaymentFinding[] = [];
+  for (const source of packet.sources.filter(({ evidenceType }) => evidenceType === "PAYMENT_RECORD")) {
+    const values = Object.fromEntries(source.spans.map((span) => {
+      const separator = span.text.indexOf(":");
+      return separator < 0 ? [span.text, ""] : [span.text.slice(0, separator), span.text.slice(separator + 1).trim()];
+    }));
+    const money = /^(?<currency>[A-Z]{3}) (?<amount>\d+(?:\.\d+)?)$/.exec(values.Amount ?? "");
+    const state = values.Status as PaymentFinding["transferState"] | undefined;
+    if (!values.Sender || !values.Recipient || !values["Payment purpose"] || !money?.groups?.currency || !money.groups.amount || !state || !["CLAIMED", "INITIATED", "RECEIVED"].includes(state)) continue;
+    const amountMinor = toMinorUnits(money.groups.amount, money.groups.currency);
+    findings.push({
+      kind: "payment",
+      id: stableId("payment", [source.id, values.Sender, values.Recipient, money.groups.currency, amountMinor]),
+      sender: values.Sender,
+      recipient: values.Recipient,
+      amountMinor,
+      currency: money.groups.currency,
+      purpose: values["Payment purpose"],
+      transferState: state,
+      status: state === "RECEIVED" ? "DOCUMENTED_CLAIM" : "UNRESOLVED",
+      uncertainty: state === "RECEIVED" ? "The submitted record claims receipt; it is not independently verified." : "The submitted record does not establish that the recipient received the transfer.",
+      citations: source.spans.map(citation),
+    });
+  }
   for (const span of spans) {
     const match = /^Transfer record:\s*(?<sender>[A-Za-z]+) -> (?<recipient>[A-Za-z]+), (?<currency>[A-Z]{3}) (?<amount>\d+(?:\.\d{1,2})?), status (?<state>claimed|initiated|received), memo "(?<purpose>[^"]+)"\.$/i.exec(
       span.text,
@@ -109,6 +160,23 @@ export function extractPayments(packet: EvidencePacket): PaymentFinding[] {
 
 export function extractExpenses(packet: EvidencePacket): ExpenseClaim[] {
   const findings: ExpenseClaim[] = [];
+  for (const source of packet.sources.filter(({ evidenceType }) => evidenceType === "EXPENSE_RECORD")) {
+    const label = source.spans.find(({ text }) => text.startsWith("Expense: "))?.text.slice(9);
+    const payer = source.spans.find(({ text }) => text.startsWith("Payer: "))?.text.slice(7);
+    const amountText = source.spans.find(({ text }) => text.startsWith("Amount: "))?.text.slice(8);
+    const money = /^(?<currency>[A-Z]{3}) (?<amount>\d+(?:\.\d+)?)$/.exec(amountText ?? "");
+    if (label && payer && money?.groups?.currency && money.groups.amount) {
+      findings.push({
+        id: stableId("expense", [source.id, payer, money.groups.currency, money.groups.amount, label]),
+        label: label.toLowerCase(),
+        payer,
+        amountMinor: toMinorUnits(money.groups.amount, money.groups.currency),
+        currency: money.groups.currency as SupportedCurrency,
+        status: "DOCUMENTED_CLAIM",
+        citations: source.spans.map(citation),
+      });
+    }
+  }
   for (const span of packet.sources.flatMap((source) => source.spans)) {
     const match = /^(?<payer>[A-Za-z]+):\s+I paid (?<currency>[A-Z]{3}) (?<amount>\d+(?:\.\d+)?) for (?:the )?(?<label>[^.]+)\.$/i.exec(span.text);
     if (!match?.groups) continue;

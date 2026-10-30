@@ -81,7 +81,7 @@ export function ingestText(input: IngestTextInput): EvidencePacket {
   let totalBytes = 0;
   const occurrence = new Map<string, number>();
   const sources = input.sources.map((sourceInput) => {
-    if (!sourceInput || !["CONVERSATION", "PAYMENT_RECORD"].includes(sourceInput.evidenceType)) {
+    if (!sourceInput || !["CONVERSATION", "EXPENSE_RECORD", "PAYMENT_RECORD"].includes(sourceInput.evidenceType)) {
       throw new Error("INVALID_EVIDENCE_TYPE");
     }
     const text = normalizeText(decodeUtf8(sourceInput.content));

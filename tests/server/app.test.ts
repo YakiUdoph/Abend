@@ -26,10 +26,10 @@ function participantBalance(run: DemoRunResponse, projection: "fromEvidence" | "
   return run.result.projections[projection].balances.find(({ participant: candidate }) => candidate === participant);
 }
 
-test("frontend serves a locked fictional demonstration with a strict browser policy", async () => {
+test("frontend serves the structured workspace with a strict browser policy", async () => {
   await withServer(async (baseUrl) => {
     const health = await json<{ status: string; mode: string }>(await fetch(`${baseUrl}/health`));
-    assert.deepEqual(health, { status: "ok", service: "abend", mode: "DEMONSTRATION" });
+    assert.deepEqual(health, { status: "ok", service: "abend", mode: "WORKSPACE" });
 
     const page = await fetch(baseUrl);
     assert.equal(page.status, 200);
@@ -37,6 +37,8 @@ test("frontend serves a locked fictional demonstration with a strict browser pol
     const html = await page.text();
     assert.match(html, /Settle the numbers/);
     assert.match(html, /FICTIONAL TEST DATA/);
+    assert.match(html, /explicit shares/i);
+    assert.match(html, /Load fictional sample/);
     assert.doesNotMatch(html, /type="file"/);
 
     const bootstrap = await json<{ mode: { demonstration: { status: string }; live: { status: string } }; packet: { label: string } }>(await fetch(`${baseUrl}/api/demo`));
@@ -69,14 +71,14 @@ test("browser API runs real Mozaik loops and applies validated review decisions"
     const decisionUrl = `${baseUrl}/api/demo/investigations/${encodeURIComponent(before.runId)}/decisions`;
     const linked = await json<DemoRunResponse>(await fetch(decisionUrl, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-abend-session": before.accessToken },
       body: JSON.stringify({ kind: "LINK_PAYMENT_TO_AGREEMENT", paymentId: payment.id, agreementId: agreement.id }),
     }));
     assert.equal(participantBalance(linked, "afterConfirmations", "Bea")?.amountMinor, "-10000");
 
     const confirmed = await json<DemoRunResponse>(await fetch(decisionUrl, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-abend-session": before.accessToken },
       body: JSON.stringify({ kind: "CONFIRM_PAYMENT_RECEIPT", paymentId: payment.id }),
     }));
     assert.equal(participantBalance(confirmed, "afterConfirmations", "Bea")?.amountMinor, "-6000");
@@ -97,7 +99,7 @@ test("review API rejects unsupported and contradictory decisions without losing 
     const decisionUrl = `${baseUrl}/api/demo/investigations/${encodeURIComponent(before.runId)}/decisions`;
     const unsupported = await fetch(decisionUrl, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-abend-session": before.accessToken },
       body: JSON.stringify({ kind: "BYPASS_VALIDATION" }),
     });
     assert.equal(unsupported.status, 400);

@@ -180,10 +180,22 @@ export function allocateEqualShares(agreement: AgreementFinding): ShareAllocatio
   });
 }
 
+export function allocateShares(agreement: AgreementFinding): ShareAllocation[] {
+  if (agreement.split === "EQUAL") return allocateEqualShares(agreement);
+  const total = requirePositiveMinor(agreement.amountMinor, `agreement:${agreement.id}`);
+  if (!agreement.shares || agreement.shares.length !== agreement.participants.length) throw new Error(`INVALID_EXACT_SHARES:${agreement.id}`);
+  const allocations = agreement.shares.map(({ participant, amountMinor }) => {
+    if (!/^\d+$/.test(amountMinor)) throw new Error(`INVALID_EXACT_SHARE:${agreement.id}:${participant}`);
+    return { participant, amountMinor, remainderMinor: "0" as const };
+  });
+  if (allocations.reduce((sum, share) => sum + BigInt(share.amountMinor), 0n) !== total) throw new Error(`SHARES_DO_NOT_SUM:${agreement.id}`);
+  return allocations;
+}
+
 export function calculateObligations(agreement: AgreementFinding): Obligation[] {
   if (agreement.status === "CONFLICTING" || agreement.status === "UNRESOLVED") return [];
   const exponent = currencyExponent(agreement.currency);
-  return allocateEqualShares(agreement)
+  return allocateShares(agreement)
     .filter(({ participant }) => participant !== agreement.payer)
     .map(({ participant, amountMinor }) => ({
       id: `obligation:${agreement.id}:${participant}:${agreement.payer}:${agreement.currency}`,
@@ -282,8 +294,7 @@ function applyDecisions(
 }
 
 function paymentFingerprint(payment: PaymentFinding): string {
-  const citations = payment.citations.map(({ sourceId, start, end }) => `${sourceId}:${start}:${end}`).sort().join(",");
-  return [payment.sender, payment.recipient, payment.amountMinor, payment.currency, citations].join("|");
+  return [payment.sender, payment.recipient, payment.amountMinor, payment.currency, payment.purpose.trim().toLocaleLowerCase("en-US")].join("|");
 }
 
 function paymentClarification(payment: PaymentFinding, reason: PaymentApplication["reason"]): string {
@@ -301,7 +312,7 @@ export function reconcileLedger(input: LedgerInput): ReconciliationLedger {
 
   const transformed = applyDecisions(input.agreements, input.payments, decisions);
   const activeAgreements = transformed.agreements.filter((agreement) => agreement.status !== "CONFLICTING" && agreement.status !== "UNRESOLVED");
-  const shares = Object.fromEntries(activeAgreements.map((agreement) => [agreement.id, allocateEqualShares(agreement)]));
+  const shares = Object.fromEntries(activeAgreements.map((agreement) => [agreement.id, allocateShares(agreement)]));
   const obligations = activeAgreements.flatMap(calculateObligations);
   const unresolved: UnresolvedDispute[] = [];
 

@@ -2,57 +2,50 @@
 
 **Settle the numbers. Keep the friendship.**
 
-Abend is an evidence-based shared-expense and repayment reconciliation application. It helps friends, roommates and trip groups reconstruct a disputed balance from supplied conversations and payment records, while keeping unsupported assumptions out of the total.
+Abend is an evidence-based shared-expense and repayment reconciliation application. It processes new structured records while keeping unsupported assumptions outside the balance.
 
-This repository includes a complete local **fictional demonstration**. It does not accept private data, connect to banks, initiate payments or claim successful live-model extraction.
+## Working product
 
-## The problem
+The local workspace starts empty. A user can add, edit, or remove:
 
-A mathematically correct ledger can still be wrong when its assumptions are unsupported. An expense may appear in a conversation without an agreement to share it. A transfer record may say `initiated` without proving receipt. Abend keeps those distinctions visible, cites the relevant source spans and lets a reviewer make explicit, reversible decisions.
+- participant names and one explicit currency per investigation;
+- shared expenses, payer, and exact per-participant shares;
+- repayments with sender, recipient, purpose, amount, and claimed status;
+- a bounded supporting conversation excerpt.
 
-## What the demonstration does
+An optional **Load fictional sample** control is clearly labeled. No sample values are silently injected.
 
-The bundled `FICTIONAL TEST DATA` follows Alex, Bea and Chen:
+Selecting **Investigate records** creates immutable evidence spans and launches distinct Agreement and Payment investigators through genuine `@mozaik-ai/core` `runLoop` calls. Their validated findings enter shared runtime state through semantic events. The deterministic reconciliation participant reacts to both streams and computes currency-separated balances with integer minor units.
 
-1. Open and inspect the immutable conversation and payment-record spans.
-2. Start two genuine Mozaik investigator loops with one action.
-3. Review the documented accommodation agreement, initiated EUR 40 transfer and unsupported EUR 36 taxi.
-4. Compare the conservative **From the evidence** projection with **After confirmations**.
-5. Link the ambiguous transfer to the accommodation and separately confirm receipt.
-6. Observe the deterministic recalculation: Bea changes from EUR 100 to EUR 60 outstanding; Chen remains at EUR 100; the taxi stays excluded.
-7. Open exact evidence citations, inspect decision history, edit a friendly message and view sanitized authentic runtime events.
+Repayments are not applied merely because a record says `RECEIVED`. A reviewer must link purpose and confirm receipt through versioned runtime decisions. The UI shows conservative and after-confirmation projections, evidence citations, a friendly summary, and sanitized authentic runtime metadata.
 
-The browser never calculates balances independently or hardcodes the expected result. It renders projections returned by the existing deterministic domain engine.
-
-## Why two concurrent agents matter
-
-Agreement and Payment investigators examine the same immutable packet independently and at the same time. The Agreement investigator identifies supported sharing terms; the Payment investigator preserves the transfer's actual evidence status. Their validated findings enter shared runtime state as semantic events. A deterministic reconciliation participant reacts to both streams, revises the combined record as findings arrive and publishes reconciliation updates.
-
-This separation prevents a single extraction step from quietly turning “sent” into “received” or inventing a split. The verification view exposes the actual participant IDs, SDK-generated loop IDs, timestamps, overlap window and shared-state events produced by each run.
+Conversation excerpts are preserved as evidence but are not presented as generally understood natural language. External-model extraction is not part of the core workflow.
 
 ## Architecture
 
 ```text
-Browser (semantic HTML + compiled TypeScript client)
-  -> local Node HTTP API
-     -> immutable fictional EvidencePacket
-     -> Mozaik Agreement loop -----\
-     -> Mozaik Payment loop --------+-> validated events/shared state
-     -> deterministic reconciler --/
-     -> human review events
-     -> bigint reconciliation + dual projections
-  <- findings, citations, decisions, balances and sanitized runtime events
+Browser workspace
+  -> bounded Node API + per-run capability token
+  -> immutable EvidencePacket
+  -> Agreement runLoop ----\
+  -> Payment runLoop -------+-> semantic events + shared RuntimeState
+  -> reconciliation reactor/
+  -> deterministic bigint ledger
+  -> versioned human decisions and dual projections
 ```
 
-- `src/server/app.ts` serves the local interface and bounded demonstration API.
-- `src/runtime/investigation.ts` owns Mozaik participants, loops, shared state and review events.
-- `src/domain/reconciliation.ts` performs authoritative integer-minor-unit calculations.
-- `src/domain/projections.ts` builds the two explanation-rich financial views from one evidence/decision history.
-- `src/web/client.ts` renders server results and sends validated review actions; it contains no financial ledger.
+Key modules:
+
+- `src/domain/workspace.ts`: server-side submission validation and structured evidence creation.
+- `src/runtime/investigation.ts`: Mozaik participants, concurrent loops, events, shared state, and review events.
+- `src/domain/reconciliation.ts`: authoritative exact-share, repayment, duplicate, and balance arithmetic.
+- `src/domain/projections.ts`: evidence-only and after-confirmation explanations.
+- `src/server/app.ts`: bounded API, in-memory run isolation, rate limit, and static assets.
+- `src/web/client.ts`: editable workspace and server-result rendering; it contains no financial ledger.
 
 ## Install and run
 
-Requirements: Node.js 20–24, npm and a current Chromium browser for the browser test. The recorded T006 run used Node.js 24.18.0 and Chrome 156.
+Requirements: Node.js 20–24, npm, and Chrome or Edge for the browser test.
 
 ```powershell
 npm.cmd ci --ignore-scripts
@@ -62,97 +55,41 @@ npm.cmd run build
 npm.cmd run dev
 ```
 
-Open the printed `ABEND_SERVER_URL` (normally `http://127.0.0.1:4173`), select **Open the fictional demonstration**, then select **Work it out**. No provider key is needed or used.
+Open the printed `ABEND_SERVER_URL`, enter records, and select **Investigate records**. No provider key is needed or used.
 
-To reproduce the command-line concurrency/reconciliation proof:
-
-```powershell
-npm.cmd run proof
-```
-
-To execute the real headless-browser journey using an installed Chrome or Edge:
+Verification commands:
 
 ```powershell
-npm.cmd run test:browser
-```
-
-If Chromium is installed outside the standard location, set `CHROME_PATH` for that command. Browser screenshots are written to ignored `.artifacts/` output.
-
-## Genuine implementation status
-
-Implemented and exercised:
-
-- Bounded UTF-8 ingestion, stable hashes/IDs/spans, aliases, evidence types and explicit currencies.
-- Pinned `@mozaik-ai/core` 4.0.6 with two distinct, genuinely overlapping investigator loops.
-- Strict structured-output validation and citation resolution before findings reach shared state.
-- Event-driven cross-agent reconciliation with order-independent and duplicate-safe behavior.
-- Deterministic `bigint` obligations, confirmation-gated repayments, duplicate handling, overpayment caps and currency-separated balances.
-- Immutable reviewer decisions, contradiction checks, reversal and deterministic recomputation.
-- `FROM_EVIDENCE` and `AFTER_CONFIRMATIONS` projections with amount-level explanations and provenance.
-- Responsive, keyboard-operable local interface with visible statuses, source navigation, empty/loading/error/partial-result handling, reduced-motion support and an authentic verification view.
-- API integration tests and a Chrome browser journey through evidence, investigation, review, recalculation, citations and the authentic verification timeline.
-
-## Execution-mode honesty
-
-**Demonstration mode is available.** It uses clearly labeled fictional evidence and the deterministic Mozaik inference runner. The output still travels through normal ingestion, validation, shared state, reconciliation and review paths.
-
-**Live investigation is unavailable.** The controlled Gemini attempts reached the provider but returned HTTP 500/503 before producing model output. Therefore no successful provider-backed extraction or validated live finding has been demonstrated. The interface does not accept arbitrary or private conversations and does not present live inference as working.
-
-## Security and privacy boundaries
-
-- `.env`, `.env.local`, generated output and browser artifacts are ignored by Git.
-- Evidence is rendered through DOM text nodes under a strict same-origin Content Security Policy.
-- Investigators have no filesystem, shell, payment, secret or broad network tools.
-- Review requests are bounded and domain validation rejects unsupported or contradictory decisions.
-- The local demo stores runs only in server memory. There is no persistence, authorization, retention/deletion service or authenticated reviewer identity.
-- This is a reconciliation aid, not a bank verifier, legal conclusion, fraud detector or debt-collection system.
-
-## Reconciliation guarantees
-
-- Every material finding and displayed balance term resolves to immutable evidence or a relevant reviewer decision.
-- Amounts use integer minor units with explicit currencies and exponents; binary floating point is not used for balances.
-- An initiated or claimed transfer remains unapplied until receipt and obligation linkage satisfy policy.
-- An expense without a supported sharing agreement stays visible but excluded.
-- Currencies remain separate; there is no implicit FX conversion.
-- Original evidence remains immutable when review decisions are appended or reversed.
-
-## Verification
-
-```powershell
-npm.cmd run typecheck
-npm.cmd test
-npm.cmd run build
 npm.cmd run proof
 npm.cmd run test:browser
 git diff --check
 ```
 
-See `PROGRESS.md` for the latest executed counts, authentic loop evidence and limitations.
+The latest T008 local run recorded 53 passing automated tests and a passing Chrome journey on a new USD scenario. Exact IDs, timestamps, and overlap measurements are generated on each run; see `PROGRESS.md` for the latest recorded evidence.
 
-## Public release and hosting
+## Security and privacy boundaries
 
-The public repository is [YakiUdoph/Abend](https://github.com/YakiUdoph/Abend). The repository is the canonical source for the fictional demonstration and its reproducibility evidence.
+- Request size, participants, names, records, currencies, amounts, shares, statuses, and conversation length are validated server-side.
+- Investigation starts are rate-limited. Review mutations require an unguessable per-run capability token.
+- Evidence is rendered through DOM text nodes under a same-origin Content Security Policy.
+- Investigators receive no shell, filesystem, bank, payment, secret, or broad-network tools.
+- Raw conversations are not logged by application code.
+- Runs exist only in one server process. There is no durable persistence, user account authentication, or cross-device recovery.
+- Abend does not connect to banks, initiate payments, collect debts, send messages, or perform implicit currency conversion.
 
-`render.yaml` describes a free Render web service with the production build, start command and `/health` check. Abend deliberately keeps each demonstration run in one server process; on Render's free service, a cold start or service restart clears those in-memory runs. A fresh demonstration can then be started normally. No hosting account or payment method is required by the application itself, and no secrets are required for demonstration mode.
+## Inference honesty
 
-The blueprint has been prepared and locally verified, but a production URL is not claimed until an authenticated Render deployment and public smoke test succeed.
+The core product uses a deterministic inference runner inside genuine Mozaik agent loops to validate the bounded structured-record grammar. It is not described as LLM inference. Earlier controlled Gemini requests returned HTTP 500/503 before model output, so successful provider-backed extraction remains unverified and unavailable.
 
-## Submission summary
+## Release status
 
-**Project:** Abend — Settle the numbers. Keep the friendship.
+The repository has a Render blueprint, but T008 is not claimed as deployed or pushed until those external actions and public smoke tests actually occur. The hackathon entry has not been submitted.
 
-**Track:** Freestyle
+Still unavailable:
 
-**Description:** Abend is an evidence-based shared-expense and repayment reconciliation application. Two concurrent Mozaik investigators independently inspect a fictional conversation and payment record, publish citation-backed findings into shared state, and trigger deterministic integer-minor-unit reconciliation. A reviewer can resolve ambiguity through auditable decisions and compare the evidence-only result with the recomputed result after confirmations.
+- free-form natural-language extraction, OCR, or PDF/image extraction;
+- ratio or receipt-itemized split entry (exact unequal shares are supported);
+- durable storage, authenticated identities, retention/deletion controls, and multi-device sessions;
+- successful live-model inference, production deployment verification, and submission receipt.
 
-**Why the agents are genuinely concurrent:** one action launches separate Agreement and Payment `runLoop` calls without awaiting either. Tests and the browser verification view use native runtime events to require distinct SDK-generated loop IDs and overlapping start/completion windows. Reconciliation consumes semantic findings from both producers through shared state; it does not substitute a renamed sequential step or hardcoded final answer.
-
-## Not yet available
-
-- Successful live Gemini extraction.
-- Arbitrary customer-data ingestion in the browser.
-- Unequal, ratio or itemized split extraction.
-- Persistent/auditable server storage, authenticated users and retention/deletion controls.
-- OCR/PDF ingestion, banking, payment initiation, automatic sending or FX conversion.
-- Production deployment and submission verification.
-- Documented unequal, ratio or itemized splits (acceptance case B). Cases A and C–Q have focused automated coverage; the browser journey covers the core deterministic and concurrency path rather than every fixture.
+The public repository is [YakiUdoph/Abend](https://github.com/YakiUdoph/Abend). Official competition requirements and current limitations are tracked in `RULES.md`, `TASKS.md`, and `PROGRESS.md`.

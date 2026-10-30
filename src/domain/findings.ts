@@ -4,7 +4,8 @@ import { SUPPORTED_CURRENCY_EXPONENTS } from "./ingestion.js";
 import type { SafeProviderDiagnostic } from "../runtime/provider-runner.js";
 
 export type FindingStatus = "DOCUMENTED_CLAIM" | "USER_CONFIRMED" | "INDEPENDENTLY_VERIFIED" | "CONFLICTING" | "UNRESOLVED";
-export type AgreementFinding = { kind: "agreement"; id: string; expenseLabel: string; payer: string; participants: string[]; amountMinor: string; currency: string; split: "EQUAL"; status: "DOCUMENTED_CLAIM" | "USER_CONFIRMED" | "CONFLICTING" | "UNRESOLVED"; uncertainty: string; citations: Citation[] };
+export type AgreementShare = { participant: string; amountMinor: string };
+export type AgreementFinding = { kind: "agreement"; id: string; expenseLabel: string; payer: string; participants: string[]; amountMinor: string; currency: string; split: "EQUAL" | "EXACT"; shares?: AgreementShare[]; status: "DOCUMENTED_CLAIM" | "USER_CONFIRMED" | "CONFLICTING" | "UNRESOLVED"; uncertainty: string; citations: Citation[] };
 export type PaymentFinding = { kind: "payment"; id: string; sender: string; recipient: string; amountMinor: string; currency: string; purpose: string; obligationId?: string; transferState: "MENTIONED" | "CLAIMED" | "CLAIMED_SENT" | "INITIATED" | "RECEIVED" | "DISPUTED" | "REJECTED" | "UNKNOWN"; status: FindingStatus; uncertainty: string; citations: Citation[] };
 export type Finding = AgreementFinding | PaymentFinding;
 export type AgentOutput = { status: "ok"; findings: Finding[] } | { status: "error"; code: string; diagnostic?: SafeProviderDiagnostic };
@@ -34,7 +35,7 @@ function nonEmptyString(value: unknown, path: string): string {
 function parseCitation(value: unknown, path: string): Citation {
   const candidate = record(value, path);
   const evidenceType = candidate.evidenceType;
-  if (evidenceType !== "CONVERSATION" && evidenceType !== "PAYMENT_RECORD") invalid("INVALID_ENUM", `${path}.evidenceType`);
+  if (evidenceType !== "CONVERSATION" && evidenceType !== "EXPENSE_RECORD" && evidenceType !== "PAYMENT_RECORD") invalid("INVALID_ENUM", `${path}.evidenceType`);
   if (!Number.isSafeInteger(candidate.start)) invalid("EXPECTED_SAFE_INTEGER", `${path}.start`);
   if (!Number.isSafeInteger(candidate.end)) invalid("EXPECTED_SAFE_INTEGER", `${path}.end`);
   return { sourceId: nonEmptyString(candidate.sourceId, `${path}.sourceId`), start: candidate.start as number, end: candidate.end as number, text: nonEmptyString(candidate.text, `${path}.text`), excerptHash: nonEmptyString(candidate.excerptHash, `${path}.excerptHash`), evidenceType };
@@ -49,9 +50,17 @@ function parseFinding(value: unknown, path: string): Finding {
   const status = nonEmptyString(candidate.status, `${path}.status`);
   if (!OUTPUT_STATUSES.has(status)) invalid("DISALLOWED_MODEL_STATUS", `${path}.status`);
   if (candidate.kind === "agreement") {
-    if (candidate.split !== "EQUAL") invalid("INVALID_ENUM", `${path}.split`);
+    if (candidate.split !== "EQUAL" && candidate.split !== "EXACT") invalid("INVALID_ENUM", `${path}.split`);
     if (!Array.isArray(candidate.participants)) invalid("EXPECTED_ARRAY", `${path}.participants`);
-    return { kind: "agreement", ...common, expenseLabel: nonEmptyString(candidate.expenseLabel, `${path}.expenseLabel`), payer: nonEmptyString(candidate.payer, `${path}.payer`), participants: candidate.participants.map((item, index) => nonEmptyString(item, `${path}.participants[${index}]`)), split: "EQUAL", status: status as AgreementFinding["status"] };
+    let shares: AgreementShare[] | undefined;
+    if (candidate.split === "EXACT") {
+      if (!Array.isArray(candidate.shares) || candidate.shares.length === 0) invalid("NON_EMPTY_ARRAY_REQUIRED", `${path}.shares`);
+      shares = candidate.shares.map((item, index) => {
+        const share = record(item, `${path}.shares[${index}]`);
+        return { participant: nonEmptyString(share.participant, `${path}.shares[${index}].participant`), amountMinor: nonEmptyString(share.amountMinor, `${path}.shares[${index}].amountMinor`) };
+      });
+    }
+    return { kind: "agreement", ...common, expenseLabel: nonEmptyString(candidate.expenseLabel, `${path}.expenseLabel`), payer: nonEmptyString(candidate.payer, `${path}.payer`), participants: candidate.participants.map((item, index) => nonEmptyString(item, `${path}.participants[${index}]`)), split: candidate.split, ...(shares ? { shares } : {}), status: status as AgreementFinding["status"] };
   }
   if (candidate.kind === "payment") {
     const transferState = nonEmptyString(candidate.transferState, `${path}.transferState`);
@@ -76,6 +85,20 @@ export function validateFinding(packet: EvidencePacket, finding: Finding, path =
     requireParticipant(finding.payer, `${path}.payer`);
     finding.participants.forEach((participant, index) => requireParticipant(participant, `${path}.participants[${index}]`));
     if (finding.participants.length < 2 || !finding.participants.includes(finding.payer)) invalid("INVALID_AGREEMENT_PARTICIPANTS", `${path}.participants`);
+    if (new Set(finding.participants).size !== finding.participants.length) invalid("DUPLICATE_AGREEMENT_PARTICIPANT", `${path}.participants`);
+    if (finding.split === "EXACT") {
+      if (!finding.shares || finding.shares.length !== finding.participants.length) invalid("INVALID_EXACT_SHARES", `${path}.shares`);
+      const shareParticipants = new Set<string>();
+      let total = 0n;
+      finding.shares.forEach((share, index) => {
+        requireParticipant(share.participant, `${path}.shares[${index}].participant`);
+        if (!finding.participants.includes(share.participant) || shareParticipants.has(share.participant)) invalid("INVALID_EXACT_SHARES", `${path}.shares[${index}]`);
+        if (!/^\d+$/.test(share.amountMinor)) invalid("INVALID_MINOR_UNIT_AMOUNT", `${path}.shares[${index}].amountMinor`);
+        shareParticipants.add(share.participant);
+        total += BigInt(share.amountMinor);
+      });
+      if (total !== BigInt(finding.amountMinor)) invalid("SHARES_DO_NOT_SUM", `${path}.shares`);
+    }
   } else {
     requireParticipant(finding.sender, `${path}.sender`);
     requireParticipant(finding.recipient, `${path}.recipient`);

@@ -10,28 +10,35 @@ import {
 } from "../runtime/investigation.js";
 import type { HumanDecisionKind } from "../domain/reconciliation.js";
 import type { EvidencePacket } from "../domain/evidence.js";
+import { workspacePacketFromUnknown } from "../domain/workspace.js";
 
-const MAX_REQUEST_BYTES = 4_096;
+const MAX_REQUEST_BYTES = 32_768;
+const MAX_INVESTIGATIONS_PER_MINUTE = 10;
 const projectRoot = process.cwd();
 
 type Investigation = ReturnType<typeof createInvestigation>;
 
-type DemoSession = {
+type InvestigationSession = {
   runId: string;
+  accessToken: string;
   createdAt: string;
+  mode: "WORKSPACE" | "DEMONSTRATION";
+  packet: EvidencePacket;
   investigation: Investigation;
   result: InvestigationResult;
 };
 
-export type DemoRunResponse = {
+export type InvestigationRunResponse = {
   runId: string;
+  accessToken: string;
   createdAt: string;
-  mode: "DEMONSTRATION";
+  mode: "WORKSPACE" | "DEMONSTRATION";
   participantIds: Investigation["participantIds"];
   packet: EvidencePacket;
   result: InvestigationResult;
   friendlyMessage: string;
 };
+export type DemoRunResponse = InvestigationRunResponse;
 
 function sendJson(response: ServerResponse, status: number, body: unknown): void {
   response.writeHead(status, {
@@ -81,21 +88,22 @@ function friendlyMessage(result: InvestigationResult): string {
   const paymentTerm = payment
     ? result.projections.afterConfirmations.terms.find(({ paymentId }) => paymentId === payment.id)
     : undefined;
-  const taxi = result.projections.afterConfirmations.terms.find(({ kind }) => kind === "EXPENSE");
+  const excludedExpense = result.projections.afterConfirmations.terms.find(({ kind, status }) => kind === "EXPENSE" && status === "EXCLUDED");
   const balanceText = after ? money(after.amountMinor, after.currency, after.exponent).replace("−", "") : "the supported amount";
   if (paymentTerm?.status === "CONFIRMED") {
-    return `I worked through the accommodation records. After confirming the repayment, ${payment?.sender ?? "the sender"} has ${balanceText} outstanding. The taxi is still not included${taxi ? " because no sharing agreement was found" : ""}. Could we confirm how the taxi should be shared?`;
+    return `I worked through the submitted records. After confirming the repayment, ${payment?.sender ?? "the sender"} has ${balanceText} outstanding.${excludedExpense ? " One expense is still not included because its sharing agreement is unresolved." : ""}`;
   }
-  return `I worked through the accommodation records. The transfer record indicates a repayment was initiated, but I have not counted it yet. Could we confirm that it was received and related to the accommodation? The taxi is not included because no sharing agreement was found.`;
+  return `I worked through the submitted records. A repayment record is not counted until its receipt and purpose are supported or explicitly confirmed. Please review the unresolved items before using the balances.`;
 }
 
-function publicSession(session: DemoSession): DemoRunResponse {
+function publicSession(session: InvestigationSession): InvestigationRunResponse {
   return {
     runId: session.runId,
+    accessToken: session.accessToken,
     createdAt: session.createdAt,
-    mode: "DEMONSTRATION",
+    mode: session.mode,
     participantIds: session.investigation.participantIds,
-    packet: createFictionalEvidencePacket(),
+    packet: session.packet,
     result: session.result,
     friendlyMessage: friendlyMessage(session.result),
   };
@@ -127,7 +135,25 @@ function validDecisionKind(value: unknown): value is HumanDecisionKind {
 }
 
 export function createAbendServer() {
-  const sessions = new Map<string, DemoSession>();
+  const sessions = new Map<string, InvestigationSession>();
+  const startsByAddress = new Map<string, number[]>();
+
+  function startAllowed(address: string): boolean {
+    const now = Date.now();
+    const recent = (startsByAddress.get(address) ?? []).filter((timestamp) => timestamp > now - 60_000);
+    if (recent.length >= MAX_INVESTIGATIONS_PER_MINUTE) return false;
+    recent.push(now);
+    startsByAddress.set(address, recent);
+    return true;
+  }
+
+  async function createSession(packet: EvidencePacket, mode: InvestigationSession["mode"]): Promise<InvestigationSession> {
+    const investigation = createInvestigation(packet, { delaysMs: { agreement: 55, payment: 30 }, timeoutMs: 1_000 });
+    const result = await investigation.run();
+    const session = { runId: randomUUID(), accessToken: randomUUID(), createdAt: new Date().toISOString(), mode, packet, investigation, result };
+    sessions.set(session.runId, session);
+    return session;
+  }
 
   return createServer(async (request, response) => {
     try {
@@ -135,7 +161,7 @@ export function createAbendServer() {
       const url = new URL(request.url ?? "/", base);
 
       if (request.method === "GET" && url.pathname === "/health") {
-        sendJson(response, 200, { status: "ok", service: "abend", mode: "DEMONSTRATION" });
+        sendJson(response, 200, { status: "ok", service: "abend", mode: "WORKSPACE" });
         return;
       }
 
@@ -170,29 +196,31 @@ export function createAbendServer() {
         return;
       }
       if (request.method === "POST" && url.pathname === "/api/demo/investigations") {
-        const packet = createFictionalEvidencePacket();
-        const investigation = createInvestigation(packet, {
-          delaysMs: { agreement: 55, payment: 30 },
-          timeoutMs: 1_000,
-        });
-        const result = await investigation.run();
-        const session: DemoSession = {
-          runId: randomUUID(),
-          createdAt: new Date().toISOString(),
-          investigation,
-          result,
-        };
-        sessions.set(session.runId, session);
+        if (!startAllowed(request.socket.remoteAddress ?? "unknown")) return sendError(response, 429, "RATE_LIMITED", "Too many investigations were started. Try again in one minute.");
+        const session = await createSession(createFictionalEvidencePacket(), "DEMONSTRATION");
         sendJson(response, 201, publicSession(session));
         return;
       }
 
-      const decisionMatch = /^\/api\/demo\/investigations\/([^/]+)\/decisions$/.exec(url.pathname);
+      if (request.method === "POST" && url.pathname === "/api/investigations") {
+        if (!startAllowed(request.socket.remoteAddress ?? "unknown")) return sendError(response, 429, "RATE_LIMITED", "Too many investigations were started. Try again in one minute.");
+        const body = await readJson(request);
+        const { packet } = workspacePacketFromUnknown(body);
+        const session = await createSession(packet, "WORKSPACE");
+        sendJson(response, 201, publicSession(session));
+        return;
+      }
+
+      const decisionMatch = /^\/api\/(?:demo\/)?investigations\/([^/]+)\/decisions$/.exec(url.pathname);
       if (request.method === "POST" && decisionMatch) {
         const runId = decodeURIComponent(decisionMatch[1] ?? "");
         const session = sessions.get(runId);
         if (!session) {
           sendError(response, 404, "RUN_NOT_FOUND", "This demonstration run is no longer available. Start a new one.");
+          return;
+        }
+        if (request.headers["x-abend-session"] !== session.accessToken) {
+          sendError(response, 403, "SESSION_ACCESS_DENIED", "This investigation belongs to a different browser session.");
           return;
         }
         const body = await readJson(request);

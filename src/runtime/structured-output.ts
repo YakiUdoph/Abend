@@ -9,7 +9,7 @@ const citation = {
     end: { type: "integer", minimum: 1 },
     text: { type: "string" },
     excerptHash: { type: "string" },
-    evidenceType: { type: "string", enum: ["CONVERSATION", "PAYMENT_RECORD"] },
+    evidenceType: { type: "string", enum: ["CONVERSATION", "EXPENSE_RECORD", "PAYMENT_RECORD"] },
   },
   required: ["sourceId", "start", "end", "text", "excerptHash", "evidenceType"],
   additionalProperties: false,
@@ -26,7 +26,7 @@ export function investigatorOutputFormat(role: InvestigatorRole): StructuredOutp
   const finding = role === "agreement"
     ? {
         type: "object",
-        properties: { kind: { type: "string", enum: ["agreement"] }, ...commonProperties, expenseLabel: { type: "string" }, payer: { type: "string" }, participants: { type: "array", minItems: 2, items: { type: "string" } }, split: { type: "string", enum: ["EQUAL"] } },
+        properties: { kind: { type: "string", enum: ["agreement"] }, ...commonProperties, expenseLabel: { type: "string" }, payer: { type: "string" }, participants: { type: "array", minItems: 2, items: { type: "string" } }, split: { type: "string", enum: ["EQUAL", "EXACT"] }, shares: { type: "array", items: { type: "object", properties: { participant: { type: "string" }, amountMinor: { type: "string", pattern: "^[0-9]+$" } }, required: ["participant", "amountMinor"], additionalProperties: false } } },
         required: ["kind", "id", "expenseLabel", "payer", "participants", "amountMinor", "currency", "split", "status", "uncertainty", "citations"],
         additionalProperties: false,
       }

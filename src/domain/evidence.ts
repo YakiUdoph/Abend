@@ -9,7 +9,7 @@ export type SourceSpan = {
   evidenceType: EvidenceType;
 };
 
-export type EvidenceType = "CONVERSATION" | "PAYMENT_RECORD";
+export type EvidenceType = "CONVERSATION" | "EXPENSE_RECORD" | "PAYMENT_RECORD";
 
 export type EvidenceSource = {
   id: string;

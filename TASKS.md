@@ -1,6 +1,6 @@
 # ABEND Build Plan
 
-Status: **T001 PASS; T002 unit/SDK scope PASS; T002D live provider BLOCKED; T003 deterministic reconciliation PASS; T004 evidence projections PASS; T005 local fictional application PASS; T006 release audit PARTIAL**
+Status: **T001–T005 recorded PASS; T006 external release PARTIAL; T008 real-input local implementation and verification PASS, committed; push/deployment NOT STARTED**
 
 The order is deliberate. A phase advances only when its acceptance criteria and evidence exist. File paths below are proposed and may be refined after Phase 1, but changes must preserve separation between evidence extraction and arithmetic.
 
@@ -135,14 +135,28 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 - **Acceptance:** receipt/confirmation from the real submission system; submitted commit is accessible and reproducible.
 - **Evidence:** submission confirmation and final SHA. Never fabricate either.
 
+## T008 — Mozaik-first real-input product
+
+**Local implementation status: PASS (2026-10-30). External release status: NOT STARTED.**
+
+- The normal browser path starts empty and accepts bounded participants, currency, expenses, payer, exact shares, repayments/statuses, and optional conversation evidence.
+- Agreement and Payment receive the submitted immutable packet through distinct real Mozaik loops; runtime events and shared state drive deterministic reconciliation.
+- Exact unequal shares are validated to sum to the expense and now satisfy acceptance case B.
+- Per-run capability tokens protect review mutations; request limits and investigation rate limits are enforced.
+- Three non-fixture scenarios cover unequal USD shares, pending EUR repayment review, and duplicate GBP repayments.
+- `npm.cmd run typecheck`, `npm.cmd test`, `npm.cmd run build`, `npm.cmd run proof`, `npm.cmd run test:browser`, and `git diff --check` pass in the working tree. The recorded automated count is 53 passed, 0 failed.
+- This T008 commit records the verified implementation; the final report uses `git rev-parse HEAD` for its immutable identifier. Push, Render deployment, public smoke test, and hackathon submission were not yet performed. T008 explicitly forbids submission at this stage.
+
 ## Required acceptance matrix
+
+T008 superseding status: **A–Q PASS in focused automated coverage; B now passes for exact unequal shares. These are not seventeen browser journeys.**
 
 Release status: **A and C–Q PASS in focused automated coverage; B NOT IMPLEMENTED; the matrix is not represented as seventeen browser journeys.**
 
 | ID | Case | Arithmetic assertion | Evidence/safety assertion |
 | --- | --- | --- | --- |
 | A | Documented equal split | exact conserved shares | agreement citation required |
-| B | Documented unequal split | exact/ratio shares correct | split terms cited |
+| B | Documented unequal split | exact shares correct and conserved | structured split terms cited |
 | C | Partial repayment | only eligible amount reduces obligation | sender, recipient and status supported |
 | D | Duplicate receipt | no silent double count | duplicate rationale/correction visible |
 | E | Ambiguous repayment recipient | not applied | unresolved with candidate citations |

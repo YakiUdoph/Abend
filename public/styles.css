@@ -28,7 +28,7 @@ body {
   font-size: 16px;
   line-height: 1.55;
 }
-button, textarea { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; }
 [hidden] { display: none !important; }
@@ -105,7 +105,7 @@ h1 {
   position: relative;
   margin-bottom: 1.7rem;
   font-family: var(--serif);
-  font-size: clamp(3.3rem, 8vw, 7rem);
+  font-size: clamp(3rem, 7.2vw, 6.3rem);
   font-weight: 400;
   letter-spacing: -0.055em;
   line-height: 0.93;
@@ -173,6 +173,22 @@ h1 em { color: var(--emerald); font-weight: 400; }
 .principle-list p { color: #afb8b1; font-size: 0.9rem; }
 
 .demo-shell { width: min(1180px, calc(100% - 3rem)); margin: 5rem auto; background: var(--paper); box-shadow: var(--shadow); border: 1px solid var(--line); }
+.records-form { padding: 2rem 3rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fbfaf6; }
+.form-toolbar, .record-heading, .form-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.form-toolbar h3, .record-heading h4 { margin: 0; }
+.record-heading { margin: 2rem 0 0.75rem; }
+.record-heading p { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.82rem; }
+.field-grid, .record-fields { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+.record-list { display: grid; gap: 0.75rem; }
+.record-card { padding: 1rem; border: 1px solid var(--line); background: white; }
+.record-card header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.record-fields { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.payment-fields { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.records-form label { display: grid; gap: 0.4rem; color: var(--ink); font-size: 0.82rem; font-weight: 750; }
+.records-form label > span { color: var(--muted); font-size: 0.72rem; font-weight: 500; }
+.records-form input, .records-form select, .records-form textarea { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 3px; padding: 0.72rem; background: white; color: var(--ink); }
+.records-form > label { margin-top: 1.5rem; }
+.form-actions { justify-content: flex-start; margin-top: 1.25rem; }
 .demo-header { padding: 3.5rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem; border-bottom: 1px solid var(--line); }
 .demo-header h2 { margin-bottom: 0.65rem; font: 400 clamp(2.3rem, 5vw, 4rem)/1 var(--serif); letter-spacing: -0.035em; }
 .demo-header p:not(.eyebrow) { max-width: 670px; color: var(--muted); margin-bottom: 0; }
@@ -298,6 +314,8 @@ dialog::backdrop { background: rgba(13, 22, 17, 0.66); }
   .principles { padding: 5rem 1rem; }
   .principle-list li + li { padding-left: 0; border-left: 0; }
   .demo-shell { width: 100%; margin: 2rem 0; border-left: 0; border-right: 0; }
+  .records-form { padding: 1.5rem; }
+  .record-fields, .payment-fields { grid-template-columns: 1fr 1fr; }
   .demo-header, .workspace-section { padding: 2rem 1rem; }
   .demo-header { flex-direction: column; }
   .journey-steps { padding: 0 1rem; overflow-x: auto; grid-template-columns: repeat(5, minmax(7rem, 1fr)); }
@@ -309,7 +327,9 @@ dialog::backdrop { background: rgba(13, 22, 17, 0.66); }
 @media (max-width: 480px) {
   .site-header nav { gap: 0.8rem; }
   .site-header nav a { display: none; }
-  h1 { font-size: clamp(3rem, 17vw, 4.5rem); }
+  h1 { font-size: clamp(2.7rem, 15.3vw, 4.05rem); }
+  .field-grid, .record-fields, .payment-fields { grid-template-columns: 1fr; }
+  .form-toolbar, .record-heading, .form-actions { align-items: flex-start; flex-direction: column; }
   .hero-actions .button { width: 100%; }
   .privacy-note { flex-direction: column; gap: 0.25rem; }
   .manifest-grid { grid-template-columns: 1fr; }
