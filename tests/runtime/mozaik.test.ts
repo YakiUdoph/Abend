@@ -33,7 +33,7 @@ test("runtime initializes and publishes participant lifecycle events", async () 
   assert.equal(result.agentWindows.length, 2);
 });
 
-test("two genuine Mozaik loops have distinct IDs and overlapping windows", async () => {
+test("acceptance N: two genuine Mozaik loops have distinct IDs and overlapping windows", async () => {
   const investigation = createInvestigation(createFictionalEvidencePacket(), {
     delaysMs: { agreement: 50, payment: 30 },
   });
@@ -44,7 +44,7 @@ test("two genuine Mozaik loops have distinct IDs and overlapping windows", async
   assert.equal(result.agentWindows.every((window) => window.status === "COMPLETED"), true);
 });
 
-test("cross-agent findings cause an unresolved reconciliation without applying payment", async () => {
+test("acceptance O: cross-agent findings cause an unresolved reconciliation without applying payment", async () => {
   const result = await createInvestigation(createFictionalEvidencePacket()).run();
   assert.equal(result.agreements.length, 1);
   assert.equal(result.payments.length, 1);
@@ -100,7 +100,7 @@ test("duplicate findings are idempotent", async () => {
   assert.equal(result.reconciliations.length, 1);
 });
 
-test("missing evidence yields no fabricated findings", async () => {
+test("acceptance J: irrelevant messages yield no findings or financial result", async () => {
   const packet: EvidencePacket = {
     id: "missing-evidence",
     label: "FICTIONAL TEST DATA",

@@ -134,6 +134,11 @@ export function createAbendServer() {
       const base = `http://${request.headers.host ?? "127.0.0.1"}`;
       const url = new URL(request.url ?? "/", base);
 
+      if (request.method === "GET" && url.pathname === "/health") {
+        sendJson(response, 200, { status: "ok", service: "abend", mode: "DEMONSTRATION" });
+        return;
+      }
+
       if (request.method === "GET" && url.pathname === "/") {
         await serveFile(response, resolve(projectRoot, "public/index.html"), "text/html; charset=utf-8");
         return;
@@ -237,6 +242,9 @@ export async function startAbendServer(port = Number(process.env.PORT ?? 4173), 
 
 const entry = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : "";
 if (entry === import.meta.url) {
-  const { url } = await startAbendServer();
+  const { url } = await startAbendServer(
+    Number(process.env.PORT ?? 4173),
+    process.env.HOST ?? "127.0.0.1",
+  );
   process.stdout.write(`ABEND_SERVER_URL=${url}\n`);
 }

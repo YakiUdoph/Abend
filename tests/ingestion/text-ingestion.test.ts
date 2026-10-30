@@ -6,7 +6,7 @@ import { parseAgentOutput, validateFinding } from "../../src/domain/findings.js"
 
 const aliases = { Alex: ["A"], Bea: ["B"] };
 
-test("rejects empty input without creating a partial packet", () => {
+test("acceptance L: rejects empty input without creating a partial packet", () => {
   assert.throws(() => ingestText({ sources: [] }), /EMPTY_INPUT/);
   assert.throws(() => ingestText({ sources: [{ evidenceType: "CONVERSATION", content: "  \r\n" }] }), /EMPTY_INPUT/);
 });
@@ -15,7 +15,7 @@ test("rejects an oversized source instead of truncating it", () => {
   assert.throws(() => ingestText({ sources: [{ evidenceType: "CONVERSATION", content: "x".repeat(MAX_SOURCE_BYTES + 1) }] }), /SOURCE_TOO_LARGE/);
 });
 
-test("rejects malformed UTF-8 bytes", () => {
+test("acceptance L: rejects malformed UTF-8 bytes", () => {
   assert.throws(() => ingestText({ sources: [{ evidenceType: "CONVERSATION", content: Uint8Array.from([0xc3, 0x28]) }] }), /INVALID_UTF8/);
 });
 

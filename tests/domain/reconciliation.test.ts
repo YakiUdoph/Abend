@@ -99,6 +99,24 @@ test("acceptance H: record claiming receipt is not confirmation and stays unappl
   assert.equal(ledger.paymentApplications[0]?.appliedMinor, "0");
 });
 
+test("acceptance E: ambiguous repayment recipient is not applied and retains citations", () => {
+  const { packet, agreement, payment } = base();
+  const ambiguousRecipient: PaymentFinding = {
+    ...payment,
+    id: "ambiguous-recipient",
+    recipient: "Chen",
+    purpose: "accommodation",
+    transferState: "INITIATED",
+    status: "UNRESOLVED",
+  };
+  const ledger = reconcileLedger({ packet, agreements: [agreement], payments: [ambiguousRecipient] });
+  const application = ledger.paymentApplications[0];
+  assert.equal(application?.reason, "NO_MATCHING_OBLIGATION");
+  assert.equal(application?.appliedMinor, "0");
+  assert.equal(application?.citations.some(({ sourceId }) => sourceId === payment.citations[0]?.sourceId), true);
+  assert.equal(ledger.unresolved.some(({ id }) => id === "unresolved:payment:ambiguous-recipient"), true);
+});
+
 test("acceptance K: currencies remain in separate ledgers and cross-currency payment is not applied", () => {
   const { packet: original, agreement, payment } = base();
   const packet = { ...original, currencies: ["EUR", "USD"] };
@@ -118,7 +136,7 @@ test("acceptance K: currencies remain in separate ledgers and cross-currency pay
   assert.deepEqual([...new Set(ledger.balances.map(({ currency }) => currency))], ["EUR", "USD"]);
 });
 
-test("duplicate payment records are never applied twice", () => {
+test("acceptance D: duplicate payment records are never applied twice and stay visible", () => {
   const { packet, agreement, payment } = base();
   const duplicate = { ...payment, id: "duplicate-payment" };
   const ledger = reconcileLedger({
@@ -234,7 +252,7 @@ test("missing evidence and invalid citations fail before arithmetic", () => {
   assert.throws(() => reconcileLedger({ packet, agreements: [invalid], payments: [] }), /CITATION_DOES_NOT_RESOLVE/);
 });
 
-test("prompt-injection text remains data and cannot create obligations or received payments", async () => {
+test("acceptance P: prompt-injection text remains data and cannot create obligations or received payments", async () => {
   const result = await createInvestigation(createFictionalEvidencePacket()).run();
   assert.equal(result.agreements.length, 1);
   assert.equal(result.payments.length, 1);
@@ -243,7 +261,7 @@ test("prompt-injection text remains data and cannot create obligations or receiv
   assert.equal(result.paymentApplications[0]?.appliedMinor, "0");
 });
 
-test("failed and timed-out investigators preserve partial deterministic state", async () => {
+test("acceptance M: failed and timed-out investigators preserve partial deterministic state", async () => {
   const failed = await createInvestigation(createFictionalEvidencePacket(), { failRole: "agreement" }).run();
   assert.equal(failed.payments.length, 1);
   assert.equal(failed.obligations.length, 0);

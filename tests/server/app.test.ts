@@ -28,6 +28,9 @@ function participantBalance(run: DemoRunResponse, projection: "fromEvidence" | "
 
 test("frontend serves a locked fictional demonstration with a strict browser policy", async () => {
   await withServer(async (baseUrl) => {
+    const health = await json<{ status: string; mode: string }>(await fetch(`${baseUrl}/health`));
+    assert.deepEqual(health, { status: "ok", service: "abend", mode: "DEMONSTRATION" });
+
     const page = await fetch(baseUrl);
     assert.equal(page.status, 200);
     assert.match(page.headers.get("content-security-policy") ?? "", /default-src 'self'/);

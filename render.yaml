@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: abend
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm ci --ignore-scripts && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: NODE_VERSION
+        value: 24.18.0
