@@ -1,173 +1,180 @@
 # ABEND Architecture
 
-Status: **IMPLEMENTED FOR THE TEXT-FIRST MVP; PROVIDER-BACKED EXTRACTION NOT VERIFIED**
-Purpose: implemented architecture and remaining-boundary documentation. Historical future-tense passages describe the design that guided the current system.
+Status: **IMPLEMENTED AND VERIFIED FOR THE STRUCTURED TEXT-FIRST MVP**
+
+Provider-backed free-form extraction is not verified and is not part of the working product. This document describes the code at the T009 release baseline rather than the earlier proposed architecture.
 
 ## Architecture principles
 
-1. Evidence is immutable; interpretations are versioned.
-2. LLM output is an untrusted proposal until schema-validated.
-3. Financial arithmetic is deterministic and currency-separated.
-4. Every material finding has provenance.
-5. Human review changes structured facts, then triggers deterministic recalculation.
-6. Mozaik concurrency and collaboration are runtime behavior, not UI theater.
-7. Uploaded content is data, never instructions.
+1. Evidence is immutable; interpretations and human decisions are versioned.
+2. Investigator output is untrusted until schema, participant, amount, currency, and citation validation succeeds.
+3. Financial arithmetic is deterministic, uses integer minor units, and keeps currencies separate.
+4. Every included financial term resolves to evidence or an active human decision.
+5. Mozaik concurrency and collaboration are runtime behavior, not UI theater.
+6. User-entered content is data, never instructions.
+7. The browser renders results but does not calculate the authoritative ledger.
 
-## Proposed boundaries
+## Implemented system
 
-```text
-Browser
-  -> ingestion API -> immutable sources/spans
-  -> investigation runtime (Mozaik)
-       |-> Agreement Investigator ----\
-       |-> Payment Investigator -------+-> typed evidence events + shared state
-       |-> Reconciliation Investigator /          |
-       |-> Human participant <--------------------/
-  -> schema validation -> reconciliation engine -> findings/balances
-  -> review API -> confirmed overrides -> recomputation
-  -> presentation API -> evidence view / friendly draft / trace view
+```mermaid
+flowchart TD
+    U[Browser workspace] -->|bounded JSON| API[Node server API]
+    API --> W[Workspace validation]
+    W --> E[Immutable EvidencePacket]
+    E --> A[Agreement agent<br/>runLoop]
+    E --> P[Payment agent<br/>runLoop]
+    A --> S[Semantic events<br/>InvestigationState]
+    P --> S
+    S --> V[Finding and citation validation]
+    V --> R[Deterministic reconciliation reactor]
+    R --> F[FROM_EVIDENCE projection]
+    U -->|capability-protected decision| H[Human participant event]
+    H --> S
+    S --> R
+    R --> C[AFTER_CONFIRMATIONS projection]
+    F --> U
+    C --> U
 ```
 
-Suggested implementation is a single TypeScript repository with a web application, server-only Mozaik runtime, deterministic domain modules, and tests. Exact framework selection is deferred until the runtime spike proves package compatibility.
+Important implementation files:
 
-## Verified Mozaik surface; runtime still NOT TESTED locally
+- `src/domain/workspace.ts` validates the structured submission and creates evidence sources.
+- `src/domain/evidence.ts` creates stable spans, hashes, packets, and citation resolution.
+- `src/domain/extractors.ts` parses the bounded structured-record grammar.
+- `src/runtime/investigation.ts` owns Mozaik initialization, participants, loops, events, shared state, failures, and review events.
+- `src/domain/reconciliation.ts` owns authoritative obligations, payment application, decisions, duplicates, and balances.
+- `src/domain/projections.ts` builds evidence-only and after-confirmation explanations.
+- `src/server/app.ts` owns HTTP boundaries, sessions, capability checks, expiry, deletion, and static delivery.
+- `src/web/client.ts` owns editable form state and safe DOM rendering.
 
-Current official documentation and the published npm page describe `@mozaik-ai/core` 4.0.6 on 2026-10-30. Pin the exact version proven during Phase 1; do not use `latest` in the submitted lockfile.
+## Mozaik runtime
 
-- `defineRuntime<State>()` returns `initializeRuntime`, `resolveRuntime`, `resolveParticipant`, `join`, `leave`, `sendMessage`, `sendEvent`, and `runLoop`.
-- These session functions are not top-level package exports.
-- `initializeRuntime({ state, inferenceRunnerConfig? })` is called once.
-- `createAgent({ name, capabilities, instruction, tools, handlers })` and `createHuman({ name, capabilities, handlers })` create participants.
-- `SituationSpecification.isSatisfiedBy({ event, participant })` filters events; a handler processor applies reactions.
-- `runLoop(agentId, message, inferenceInput, interceptionHandler?)` is fire-and-forget and creates a unique loop ID.
-- Shared mutable coordination data belongs on a `RuntimeState` subclass.
-- `sendEvent(event, senderId)` publishes semantic events; the sender must be joined.
-- Situation processors are not awaited by event fan-out. Completion and failure observation therefore need explicit events/state and timeout handling.
+Abend pins `@mozaik-ai/core` 4.0.6. Installed declarations/source and executed tests verified the runtime surface used by the application.
 
-Documentation is internally time-sensitive: an older indexed agent-loop page still says the first state is `context_update`, while the 4.0.4 changelog/current npm README say `message_received`. Phase 1 must inspect installed 4.0.6 types/source and test observed events before production code relies on names or payload shapes.
+### Initialization and participants
 
-## Participants and meaningful collaboration
+`createInvestigation` defines and initializes a new typed runtime with an `InvestigationState` subclass of `RuntimeState`. It creates and joins:
 
-### Agreement Investigator
+- an Agreement agent;
+- a Payment agent;
+- a deterministic reconciliation participant; and
+- a human review participant.
 
-Starts from the same immutable evidence packet as the Payment Investigator. Produces typed `agreement.candidate` events with participants, expense scope, split rule, status, confidence rationale and citations.
+Each participant receives an SDK-generated identity. Runtime initialization is tested to occur exactly once per runtime instance.
 
-### Payment Investigator
+### Genuine concurrent loops
 
-Runs concurrently with Agreement Investigator. Produces typed `payment.candidate` events with sender, possible recipient, amount, currency, payment state, possible obligation reference and citations.
+The Agreement and Payment agents receive the same serialized immutable evidence packet. The server invokes separate fire-and-forget `runLoop` calls without awaiting either before starting the other.
 
-### Reconciliation Investigator
+Native events supply loop IDs and timestamps. Tests use controlled role delays, assert that the measured windows overlap, assert distinct loop IDs, and repeat with both completion orders. No application timestamp or loop ID is fabricated.
 
-Does not merely wait for a fixed handoff. It subscribes to candidate and conflict events, compares emerging agreement/payment candidates, requests clarification through typed events, and records discrepancy findings. It may react as soon as either stream arrives and revise its view when the other arrives.
+### Shared state and semantic events
 
-### Human participant
+Validated agent answers become role-specific domain findings and are published with the producing participant ID. Event processors update `InvestigationState`, which stores findings, decisions, reconciliation revisions, agent windows, failures, and sanitized native/domain event records.
 
-Receives review requests, submits confirmations/corrections, and can govern risky transitions. Human responses are explicit events with actor and timestamp; they never overwrite original evidence.
+The reconciliation participant reacts when either investigator publishes a finding. It can therefore produce an intermediate revision with only one stream and a later revision after both streams arrive. Duplicate events are handled idempotently. This causal shared-state behavior is why the two agents are materially relevant rather than parallel aliases.
 
-### Proposed collaboration proof
+### Deterministic inference versus external models
 
-- One human/start event causes both initial investigator loops to start without awaiting either.
-- Distinct loop-start events overlap before both loops complete.
-- Each investigator publishes domain events carrying real citations.
-- The reconciliation investigator consumes events from both producer IDs and writes a combined discrepancy or match record to shared runtime state.
-- At least one test delays each investigator in turn, proving no assumed completion order.
-- Trace evidence comes from observed Mozaik events and stored domain events, never generated placeholders.
+The working product injects `DeterministicInvestigatorRunner`, an `InferenceRunner` implementation that validates Abend's bounded structured-record grammar. It runs inside genuine Mozaik loops but is not an LLM.
 
-## Domain data contracts
+`BundledProviderInferenceRunner` and `SafeInferenceRunner` preserve an experimental external-provider boundary. Historical Gemini attempts returned HTTP 500/503 before model output. No provider finding entered reconciliation, so successful external-model extraction remains **BLOCKED / NOT VERIFIED**.
 
-```ts
-type FindingStatus =
-  | "DOCUMENTED_CLAIM"
-  | "USER_CONFIRMED"
-  | "INDEPENDENTLY_VERIFIED"
-  | "CONFLICTING"
-  | "UNRESOLVED";
+## Evidence and validation
 
-type Money = { minor: bigint; currency: string; exponent: number };
-type Citation = {
-  sourceId: string;
-  start: number;
-  end: number;
-  excerptHash: string;
-};
+Every source has an evidence type, normalized content, stable source ID, and numbered spans. Citations carry source ID, byte/character bounds, exact excerpt text, excerpt hash, and evidence type.
 
-type Agreement = {
-  id: string;
-  expenseRefs: string[];
-  participants: string[];
-  split: { kind: "equal" | "exact" | "ratio"; values?: Record<string, bigint> };
-  status: FindingStatus;
-  citations: Citation[];
-};
+Before a finding enters shared state, validation checks:
 
-type PaymentClaim = {
-  id: string;
-  senderId?: string;
-  recipientId?: string;
-  amount: Money;
-  state: "CLAIMED" | "INITIATED" | "RECEIVED" | "UNKNOWN";
-  obligationId?: string;
-  status: FindingStatus;
-  citations: Citation[];
-};
-```
+- the source and citation resolve to the current packet;
+- excerpt bounds and hashes match immutable evidence;
+- participants are declared;
+- currencies are supported and declared;
+- amount strings have valid precision and convert to positive minor units; and
+- statuses cannot be upgraded to privileged certainty by investigator output.
 
-All LLM-facing contracts use JSON-safe decimal strings for minor units and are converted to `bigint` only after strict validation. Persistence must serialize integers losslessly.
+Optional conversation content is preserved and displayed as quoted evidence. It cannot issue instructions, add tools, or create a financial term without a supported structured record.
 
-## Reconciliation engine
+## Deterministic reconciliation
 
-Pure domain functions should:
+`reconcileLedger` is the authoritative calculation boundary. It:
 
-1. validate participants, currencies, amounts and citations;
-2. materialize supported shares from agreements;
-3. detect exact and fuzzy duplicate candidates without silently deleting them;
-4. match eligible repayments to obligations by parties, currency, amount/date/reference evidence;
-5. apply only confirmed policy-eligible records;
-6. return per-currency gross obligations, applied repayments, unresolved records and net suggestions;
-7. provide an explanation graph from every balance term back to source spans or human decisions.
+1. validates expenses, agreements, payments, decisions, and citations;
+2. allocates equal or explicit exact shares;
+3. materializes gross obligations;
+4. identifies exact duplicate payment fingerprints without hiding them;
+5. requires compatible parties, currency, agreement link, and receipt confirmation before payment application;
+6. caps overpayment and leaves excess unresolved;
+7. calculates signed balances independently per currency; and
+8. returns unresolved disputes, payment applications, obligations, and reconciliation reasons.
 
-Two projections are required:
+Amounts are decimal strings at JSON boundaries and `bigint` inside calculation. Binary floating point is not used for authoritative balances. No implicit FX conversion exists.
 
-- **Documented projection:** includes only what supplied evidence supports under the conservative policy.
-- **Confirmed projection:** also includes explicit human decisions, visibly labeled.
+`buildFinancialViews` derives two views from the same ledger inputs:
 
-## Source ingestion and prompt-injection defense
+- `FROM_EVIDENCE` excludes review-dependent payment effects.
+- `AFTER_CONFIRMATIONS` includes only active valid decisions.
 
-- Normalize line endings and create stable numbered spans before any model call.
-- Bound size, file type and encoding; reject malformed or oversized input honestly.
-- Wrap evidence in a data envelope and instruct agents that embedded directives are quotations, not commands.
-- Do not expose secrets, network tools, filesystem tools or payment tools to investigators.
-- Require structured output, allowlisted status values and citations resolving to real spans.
-- Reject or quarantine findings with missing/invalid citations, unknown participants, invented source IDs or impossible amounts.
-- Escape all evidence when rendering to prevent XSS.
-- Minimize retention and add deletion controls before handling real user data.
+Every displayed balance is checked against the effects of its included terms.
 
-## Failure and observability model
+## Human review
 
-Run state: `CREATED -> INVESTIGATING -> NEEDS_REVIEW | RECONCILED | FAILED`.
+Review requests require the run's capability token. The human participant can publish:
 
-- Provider timeout/failure marks only the affected investigator and preserves inputs/results already received.
-- A run-level deadline prevents indefinite waiting; incomplete work becomes `UNRESOLVED`.
-- Every domain event has run ID, event ID, producer participant ID, occurred-at time, schema version and redacted payload.
-- Store raw authentic runtime metadata separately from user-facing explanations.
-- Never expose prompts, API keys or full sensitive source text in public traces.
-- The verification view distinguishes Mozaik-native events from Abend domain events.
+- `LINK_PAYMENT_TO_AGREEMENT`;
+- `CONFIRM_PAYMENT_RECEIPT`;
+- `REJECT_PAYMENT_CLAIM`; or
+- `REVERSE_DECISION`.
 
-## Security review
+Decisions carry an ID, runtime actor ID, timestamp, and structured target. Reversal appends a decision that deactivates the target; it does not delete evidence or history. Contradictory, duplicate, invented, or unauthorized decisions fail without replacing the existing state.
 
-Primary risks and controls:
+The runtime actor ID proves which runtime participant emitted the event. It is not authenticated real-world identity.
 
-- **Prompt injection:** treat uploads as untrusted data; restricted tools; validate citations and output.
-- **Hallucinated finance facts:** reject uncited findings; deterministic engine; review gates.
-- **Cross-run data leakage:** per-run state, authorization on every read, no global mutable evidence store.
-- **Money precision/currency confusion:** integer minor units; explicit codes/exponents; no implicit FX.
-- **False payment certainty:** explicit payment states; receipt confirmation required.
-- **PII leakage in traces:** server-side redaction and private-by-default verification artifacts.
-- **Tampered evidence:** immutable source hashes and versioned review decisions.
-- **Denial/cost abuse:** upload, token, concurrency and time limits.
-- **Duplicate events/races:** idempotency keys, append-only event records and deterministic reducers.
+## Browser and server separation
+
+The framework-free browser:
+
+- builds structured JSON from editable controls;
+- submits and displays server responses;
+- renders citations and sanitized runtime metadata through text nodes;
+- sends capability-protected review/delete requests; and
+- contains no balance or obligation calculation.
+
+The Node server:
+
+- limits JSON requests to 32 KiB;
+- validates all workspace fields and record counts;
+- rate-limits investigation starts per address;
+- creates a random run ID and capability token;
+- stores runs in a process-local `Map`;
+- expires runs after 30 minutes;
+- permits capability-protected deletion; and
+- serves same-origin assets with CSP and defensive headers.
+
+There is no durable database, account system, cross-device recovery, bank connection, or payment API.
+
+## Trust boundaries
+
+| Boundary | Untrusted input | Enforcement |
+| --- | --- | --- |
+| Browser → server | JSON fields and quoted evidence | size, type, count, name, currency, amount, share, and status validation |
+| Evidence → investigator | source content | data envelope, no tools, bounded deterministic grammar |
+| Investigator → shared state | structured answer | schema and citation resolution, participant/currency allowlists |
+| Review → ledger | decision kind and target | capability token, allowlisted transition, target existence, contradiction checks |
+| Ledger → browser | financial result and trace metadata | deterministic term/balance checks, text-node rendering, redacted event details |
+
+## Failure handling
+
+- Investigator failure or timeout is isolated to that participant.
+- Partial validated state remains available and is marked honestly.
+- Late answers after a timeout are ignored.
+- Provider errors are converted to bounded diagnostics without retaining secrets.
+- Invalid citations or impossible records fail before arithmetic.
+- API errors return safe codes/messages and preserve the existing run.
+- Missing or expired runs return a not-found state and require a new investigation.
 
 ## Deployment boundary
 
-The web host must support the selected server runtime and the lifecycle required by concurrent Mozaik loops. This is **UNKNOWN** until Phase 1/2. If serverless lifetime conflicts with fire-and-forget execution, use a durable worker/service rather than claiming concurrency from prematurely terminated requests.
+Render builds with `npm ci --ignore-scripts && npm run build`, starts the compiled Node server, and checks `/health`. The free service may cold-start or restart. Because sessions exist only in memory, a restart clears them; this is disclosed rather than hidden.
 
+The public deployment is suitable for the bounded hackathon MVP and fictional demonstrations. It is not positioned as durable production financial infrastructure.

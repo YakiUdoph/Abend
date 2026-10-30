@@ -2,6 +2,34 @@
 
 Updated: **2026-10-30**
 
+## Current release summary
+
+- **Release baseline:** `a91cd577725b4d90fa1dd947dcdb29030b9db984`
+- **PRODUCT:** READY FOR PRESENTATION VIDEO
+- **DOCUMENTATION:** T010 PASS — judge-ready repository documentation verified
+- **SUBMISSION:** NOT COMPLETED
+- **Production:** `https://abend.onrender.com`
+
+T009 reported 56 passing automated tests, a passing public browser journey, genuine concurrent Mozaik execution with 32 ms observed Agreement/Payment overlap, 27 authentic runtime/domain events, zero npm audit vulnerabilities, and verified public deployment. These are dated T009 facts and are not relabeled as T010 executions.
+
+## T010 judge-ready documentation — PASS
+
+Documentation-only work completed on 2026-10-30:
+
+- All eight tracked Markdown files were reviewed against the implementation, package scripts, T009 evidence, and current official public rules.
+- `README.md` now provides the judge-facing problem, working product, differentiator, live path, full journey, Mozaik explanation, implemented Mermaid architecture, independently calculated test scenario, financial rules, reproducibility, security, limitations, competition status, and repository guide.
+- The PRD preserves the original proposal while separating shipped, deferred, blocked, and excluded scope. Architecture and design now document the implemented runtime and interface. Rules retain the safety/originality gates and mark the pre-build boundary as historical. Tasks preserve historical outcomes and add T007/T010 status. Agent instructions now enforce release freeze.
+- The repository's eight Markdown files passed a local-target and balanced-code-fence check. The production, GitHub repository, and official rules links each returned HTTP 200.
+- `npm.cmd run typecheck`: exit 0.
+- `npm.cmd test`: **56 passed, 0 failed**.
+- `npm.cmd run build`: exit 0.
+- `npm.cmd run proof`: exit 0; distinct Agreement loop `e3349ffe-7c89-45ee-b7fd-6c86cc552f00` and Payment loop `0e48c4aa-7a57-4277-b850-ede3398e717e` overlapped by **31 ms**. Payment finding arrived first; reconciliation updated before and after the Agreement finding.
+- `npm.cmd run test:browser`: exit 0; a new local journey rendered 27 events and observed **44 ms** overlap between distinct loops, with keyboard, reduced-motion, accessible-name, anchor, deletion/reset, and 1280/768/390 px overflow checks passing.
+- `git diff --check`: exit 0; line-ending notices are warnings only.
+- No application, dependency, package-lock, deployment, or generated product file was modified.
+
+**T010 decision:** PRODUCT READY FOR PRESENTATION VIDEO; DOCUMENTATION PASS; SUBMISSION NOT COMPLETED.
+
 ## T009 final verification — PASS
 
 Verified on 2026-10-30: release-blocker fixes add explicit repayment rejection/reversal, capability-protected run deletion, 30-minute in-process expiry, independent-session checks, and broader real-input arithmetic coverage. `npm.cmd run typecheck`, `npm.cmd test` (56 passed), `npm.cmd run build`, `npm.cmd run proof`, `npm.cmd run test:browser`, `npm.cmd audit` (0 vulnerabilities), and `git diff --check` pass locally. A separate clone of implementation commit `78eec8e3b3996c1f857d92f402e5dcfdf8f294e4` passed `npm.cmd ci --ignore-scripts`, typecheck, all 56 tests, build, proof, browser verification and clean Git checks.
@@ -56,11 +84,11 @@ The deployed application now runs the bounded structured-input evidence, investi
 
 | Area | Status | Notes |
 | --- | --- | --- |
-| Abend product definition and MVP | PROPOSED | Defined in `PRD.md`; not validated with users |
+| Abend product and bounded MVP | IMPLEMENTED / VERIFIED | Structured real-input journey is deployed; no user-research validation is claimed |
 | Former contract-change concept | RETIRED | Must not be reintroduced |
 | Competition dates and public rules | VERIFIED | Current public official pages checked 2026-10-30 |
 | Submission deadline | VERIFIED | 2026-10-31 20:00 CET, not the reported 14:00 |
-| Track choice | PROPOSED | Freestyle is the published fit |
+| Track choice | SELECTED | Freestyle is the documented project track; submission is not completed |
 | Participant registration/dashboard access | UNKNOWN | No organizer account/session was available |
 | Competitor capabilities | VERIFIED (documented scope only) | Official product/help pages reviewed; originality not proven |
 | Mozaik public API research | VERIFIED | Official docs/npm/examples reviewed for 4.0.6 |
@@ -71,7 +99,7 @@ The deployed application now runs the bounded structured-input evidence, investi
 | Deterministic finance engine | T003 UNIT/SDK INTEGRATION PASS | Evidence-validated equal splits, deterministic remainders, obligations, confirmation-gated payments, duplicates, overpayments and separate currency balances use `bigint` |
 | Human review | T003 UNIT/SDK INTEGRATION PASS | Link, receipt confirmation, rejection, split confirmation and unresolved-split decisions are audited and deterministically recomputed; no identity authentication |
 | Dual financial views | T004 UNIT/SDK INTEGRATION PASS | One evidence/decision history produces from-evidence and after-confirmation projections with checked amount-term explanations |
-| UI | T005 LOCAL BROWSER PASS | Responsive fictional journey, evidence navigation, real review controls, dual projections, friendly message and authentic verification dialog |
+| UI | T009 LOCAL/PUBLIC BROWSER PASS | Empty-by-default real-input journey, citations, confirm/reject/reverse controls, dual projections, summary, authentic verification dialog, and responsive checks |
 | T001 tests | UNIT/SDK INTEGRATION PASS | 11 passed, 0 failed on 2026-10-30 |
 | T002/T002B/T002C combined tests | UNIT/SDK INTEGRATION PASS | 21 passed, 0 failed on 2026-10-30 |
 | T003 combined tests | UNIT/SDK INTEGRATION PASS | 36 passed, 0 failed on 2026-10-30 |
@@ -82,9 +110,9 @@ The deployed application now runs the bounded structured-input evidence, investi
 | T002 structured extraction boundary | UNIT/SDK INTEGRATION PASS | Strict Mozaik schemas and validation feed genuine loops/shared state |
 | Mozaik Cloud evidence | NOT TESTED | SDK reported telemetry disabled because `MOZAIK_API_KEY` is absent |
 | T006 combined tests | UNIT/API/BROWSER PASS | 49 passed, 0 failed; proof and Chrome journey passed on 2026-10-30 |
-| Full acceptance matrix | PARTIAL / NOT COMPLETE | Focused automated coverage passes A and C–Q; unequal-split case B is not implemented; these are not all browser journeys |
+| Full acceptance matrix | FOCUSED A–Q PASS | T008/T009 add exact unequal shares; focused automated coverage is not represented as seventeen separate browser journeys |
 | Public repository | VERIFIED / PUBLISHED | `https://github.com/YakiUdoph/Abend` is public, matches local `origin`, and exposes the verified release commit |
-| Hosting | PREPARED / NOT DEPLOYED | Render free-service blueprint and health route are present; no authenticated Render session is available |
+| Hosting | VERIFIED / DEPLOYED | `https://abend.onrender.com` passed health, security-header, new-input API, and public browser checks; in-memory runs are not durable |
 | Submission | NOT SUBMITTED | Public rules rechecked; authenticated dashboard/form and private organizer channels are unavailable |
 
 ## Environment and credentials
@@ -98,9 +126,9 @@ Direct observations on 2026-10-30:
 - **VERIFIED:** `.env.local` contains the required variable names; only names/presence were checked and no secret value was printed.
 - **VERIFIED:** local hardware is a Dell Latitude 7200 2-in-1 with an Intel i7-8665U (4 cores / 8 logical processors), 15.76 GiB RAM, Intel UHD 620 integrated graphics reporting 1 GiB adapter memory, and 140.56 GiB free disk. Ollama/LM Studio/llama-server were not installed or detected.
 - **VERIFIED:** installed direct dependencies are `@mozaik-ai/core@4.0.6`, `@types/node@24.10.0`, and `typescript@5.9.3`; npm initially reported zero audited vulnerabilities.
-- **UNKNOWN:** registration, Mozaik Cloud account, provider billing/quota, hosting account and submission permissions. The public GitHub destination is verified.
+- **UNKNOWN:** registration, Mozaik Cloud account, provider billing/quota, authenticated hosting account access and submission permissions. The public GitHub destination and deployed Render service are verified from their public interfaces.
 - **VERIFIED:** TypeScript compilation and deterministic unit/SDK-integration execution during T002.
-- **PARTIAL:** a live provider request reached Gemini, but HTTP 500/503 prevented model output; Mozaik Cloud, deployment, and authenticated organizer dashboard/Discord/email updates remain NOT TESTED.
+- **PARTIAL:** a live provider request reached Gemini, but HTTP 500/503 prevented model output. Mozaik Cloud and authenticated organizer dashboard/Discord/email updates remain NOT TESTED; public deployment is verified.
 
 Node 24.18.0 compatibility is verified for the local clean-install, build, proof and Chrome journey. The package also declares the supported release range as Node 20 through 24; other versions are not claimed.
 
@@ -237,7 +265,7 @@ T002C verification executed on 2026-10-30:
 - **BLOCKED:** Gemini returned transient provider-server HTTP 500/503 responses during the controlled live run; successful model output remains unverified.
 - **VERIFIED:** the intended public repository exists at `https://github.com/YakiUdoph/Abend`, is public, and matches local `origin`.
 - **MISSING/UNKNOWN:** hosting credentials and authenticated organizer submission access.
-- **NOT TESTED:** successful live model inference, Mozaik Cloud and deployment. The local fictional browser flow and server transport are tested; arbitrary/private-data ingestion intentionally remains unavailable.
+- **Historical T002 status:** successful live model inference, Mozaik Cloud, and deployment were NOT TESTED at that task boundary. T008/T009 later verified structured-input public deployment; live-model inference and Mozaik Cloud remain unverified.
 - **TIME RISK:** the current verified deadline is October 31 at 20:00 CET; the plan must prioritize runtime proof and the text-first fixture over PDF/image extraction.
 
 ## Next action

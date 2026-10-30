@@ -1,6 +1,6 @@
 # ABEND Rules, Verified Facts and Guardrails
 
-Status date: **2026-10-30**. Public rules, event page and Freestyle brief were rechecked during T009 with no material public change found. Competition facts are time-sensitive; recheck the authenticated dashboard, Discord and email immediately before submission.
+Status date: **2026-10-30**. The official public rules were rechecked during T010 and still show the October 30–31 event, October 31 at 20:00 CET deadline, required Mozaik use, and two or more concurrent agents. Competition facts are time-sensitive; recheck the authenticated dashboard, Discord, and email immediately before submission.
 
 ## Status vocabulary
 
@@ -11,6 +11,8 @@ Status date: **2026-10-30**. Public rules, event page and Freestyle brief were r
 - **NOT STARTED:** implementation work has not begun.
 
 ## Competition facts
+
+The table below records official requirements, not a claim that the private submission process has been completed.
 
 | Fact | Status | Evidence |
 | --- | --- | --- |
@@ -81,6 +83,8 @@ Official sources:
 
 ## Product and evidence rules
 
+The following are project-specific standards. They are stricter implementation rules, not claims that the organizer mandated Abend's evidence model.
+
 1. Treat every conversation, receipt and record as untrusted supplied content.
 2. A claim is not a fact; a sent transfer is not necessarily a received transfer.
 3. Every material finding requires resolvable evidence citations.
@@ -93,6 +97,8 @@ Official sources:
 10. Do not process unrestricted accounts/inboxes or initiate payments.
 
 ## Financial rules
+
+These are Abend correctness requirements, not organizer-supplied financial rules.
 
 1. Integer minor units only; no floating-point balance arithmetic.
 2. Explicit currency and exponent on every amount.
@@ -130,5 +136,7 @@ Only documented capabilities may be compared. Absence from a product page does n
 
 ## Build-window boundary
 
-This preparation session may create/update planning documents only. Do not create application code, install dependencies, run fabricated demos, deploy, or claim acceptance tests pass. At kickoff, reconfirm the brief and only then execute `TASKS.md`.
+**Historical decision:** before kickoff, only planning documents were authorized. That boundary was rechecked before implementation began and is preserved here as provenance; it no longer describes the current repository state.
+
+**Current boundary:** the structured text-first product is implemented and in release-freeze mode. No new product feature, dependency, provider, integration, paid service, or broadened data access may be added without explicit authorization. Documentation, presentation preparation, and submission work must preserve all evidence, security, originality, and truthful-testing gates above.
 

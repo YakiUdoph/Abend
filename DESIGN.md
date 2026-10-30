@@ -1,110 +1,149 @@
 # ABEND Experience and Interface Design
 
-Status: **IMPLEMENTED AND BROWSER-VERIFIED FOR THE TEXT-FIRST MVP**
+Status: **SHIPPED AND BROWSER-VERIFIED FOR THE STRUCTURED TEXT-FIRST MVP**
 
 ## Design intent
 
-Abend should feel calm, exact and humane. It is a resolution workspace, not a forensic crime board and not a generic AI dashboard. The primary visual idea is a clean “supported balance” with an evidence trail that can be opened one term at a time.
+Abend is a calm resolution workspace, not a forensic crime board and not a generic AI dashboard. The interface emphasizes supported balances, uncertainty, and respectful review. Technical runtime evidence is available to judges and advanced users without dominating the ordinary-user journey.
 
-Tone: neutral, respectful and specific. Avoid “caught,” “lied,” “fraud,” “guilty,” and artificial confidence.
+Tone is neutral, humane, and specific. Copy avoids accusation, artificial certainty, and language such as “caught,” “lied,” “fraud,” or “guilty.”
 
-## Information architecture
+## Shipped journey
 
-### 1. Add evidence
+### 1. Empty-by-default workspace
 
-- Large conversation text area with optional `.txt` upload.
-- Separate payment-record text area and structured add-record control.
-- Plain privacy note and fictional-fixture shortcut clearly labeled test data.
-- Primary action: **Work it out**.
-- Image/PDF affordances remain absent or marked unavailable until genuinely implemented.
+The main path starts with blank participant and record fields. It never silently injects the fictional fixture. Users can:
+
+- enter comma-separated participant names;
+- select EUR, USD, GBP, or JPY;
+- add, edit, and remove expense records;
+- enter payer, total, label, and exact participant shares;
+- add, edit, and remove repayment claims; and
+- enter an optional bounded conversation excerpt.
+
+**Load fictional sample** is an explicit secondary action with a visible **FICTIONAL TEST DATA** notice.
 
 ### 2. Investigation
 
-- Honest activity state derived from real runtime events.
-- Human-readable labels such as “Checking agreements” and “Checking repayments.”
-- No fake progress percentages, invented agent dialogue or minimum-duration animation.
-- Partial failure remains visible with retry guidance.
+Submitting valid records moves the journey from Records to Investigate. The loading state says only that the request is running; it does not display a fake percentage or artificial delay.
 
-### 3. Review findings
+The result shows separate Agreement and Payment investigator cards with authentic participant IDs, loop IDs, and statuses. A concise overlap message reports whether distinct genuine loops overlapped according to runtime events.
 
-Use a single ordered review queue:
+### 3. Evidence-backed findings
 
-- **Supported** — documented finding and linked evidence.
-- **Needs your confirmation** — an explicit choice changes the result.
-- **Conflicting** — show both records side by side without choosing silently.
-- **Not included** — explain missing agreement, duplicate suspicion or irrelevant content.
+The submitted immutable packet is displayed before interpretation. Expense, payment, and optional conversation sources show numbered spans and stable citation targets.
 
-Each card shows a concise proposition, money/people involved, status chip, evidence excerpt, source location and “correct this” action. Confidence is explanatory text, not a misleading precision percentage.
+Finding cards distinguish agreement facts, payment claims, and unresolved/excluded items. Citation controls move keyboard focus to the exact supporting span. User-entered content is rendered as text, never injected as HTML.
 
-### 4. Balances
+### 4. Human review
 
-Lead with balances by currency; never merge currency columns without an approved rate.
+Each repayment is reviewed independently. Depending on current decision state, the interface can offer:
 
-Two clearly named tabs or stacked sections:
+- link the repayment to a compatible expense agreement;
+- confirm receipt;
+- reject the repayment claim;
+- reverse the confirmation; or
+- reverse the rejection.
 
-- **From the documents** — conservative projection.
-- **After your confirmations** — includes reviewed facts and identifies each change.
+Decision history remains visible with decision kind, authentic decision ID, and timestamp. Reversal adds history instead of erasing the prior action. API failures appear beside the review controls and preserve the existing result.
 
-Every amount expands into its arithmetic and citations. Unresolved transactions sit beside, not inside, the total. A “how this was calculated” panel shows shares, repayments and duplicate adjustments in minor-unit-safe formatted money.
+### 5. Financial projections
 
-### 5. Friendly message
+Two projection cards make policy visible:
 
-Draft only from accepted structured results. Default form:
+- **From the evidence** shows the conservative result before review-dependent payment effects.
+- **After confirmations** includes active valid human decisions.
 
-> I worked through the accommodation records. The documented split leaves [summary]. I found [uncertainty] and haven’t counted it yet. Could we confirm [question]? Once confirmed, the balance would be [conditional result].
+Each balance preserves currency codes and expands into calculation terms with inclusion status, reason, evidence references, and relevant decision references. Unsupported expenses and unconfirmed repayments remain visible without silently affecting totals.
 
-The user must be able to edit/copy it. Abend does not send messages.
+### 6. Friendly summary
 
-### 6. Verification view
+The product drafts an editable, non-accusatory summary derived from the structured result. The user can copy it; Abend never sends messages.
 
-A secondary route/drawer for judges and technical users:
+### 7. Runtime verification
 
-- run ID and status;
-- participant manifests/roles;
-- real event timeline with producer IDs and loop IDs when emitted by Mozaik;
-- overlap/concurrency evidence;
-- domain collaboration events and shared-state revisions;
-- redaction notice and downloadable sanitized JSON if implemented.
+After a run completes, the Verification control opens a secondary dialog containing:
 
-Never create trace rows client-side to make a run look complete.
+- run mode and run ID;
+- participant identities;
+- authentic sanitized native/domain event types;
+- producer identities, timestamps, and loop IDs when present; and
+- no prompts, secrets, invented traces, or raw technical payload dump.
+
+This view proves Mozaik execution while keeping the primary product understandable to a nontechnical user.
+
+### 8. New investigation and deletion
+
+**Start new investigation** sends a capability-protected delete request for the active server run, clears browser state, and returns to one blank expense record. Runs also expire in server memory after 30 minutes.
 
 ## Visual system
 
-- Warm off-white canvas, near-black text, restrained moss/teal for supported information, amber for unresolved, and muted red only for conflicts/errors.
-- Editorial typography with tabular numerals for money.
-- Generous whitespace, one strong column on mobile, two-column evidence/result layout on desktop.
-- Hairline borders and subtle elevation; no glassmorphism, decorative chatbot bubbles or gratuitous charts.
-- Motion only for state changes; respect `prefers-reduced-motion`.
-- Minimum WCAG AA contrast, visible keyboard focus, semantic headings, labeled inputs and non-color status cues.
+- Warm paper background and near-black typography keep the product serious without feeling punitive.
+- Deep emerald signals trust and active structure; amber highlights focus and review without implying guilt.
+- Serif display headings give the product an editorial, human quality.
+- Monospace is reserved for evidence spans, amounts, identities, and event metadata.
+- Thin borders, open spacing, and restrained motion keep dense evidence readable.
+- Status is communicated with text and structure, never color alone.
 
-## Key copy rules
+The wordmark and tagline remain consistent: **ABEND. Settle the numbers. Keep the friendship.**
 
-Say:
+## Copy rules
 
-- “The conversation says…”
-- “This record indicates a transfer was initiated.”
-- “Not included because no sharing agreement was found.”
-- “If you confirm this repayment was received…”
+Use:
 
-Do not say:
+- “The record says this transfer was initiated.”
+- “Receipt still needs confirmation.”
+- “This expense is excluded because no sharing agreement is available.”
+- “After confirmations.”
+- “What was this repayment for, and was it received?”
 
-- “This definitely happened” for a claim.
-- “They owe you” without the projection/status qualifier.
-- “AI verified” when a model only extracted text.
-- “Payment complete” from a sent/initiated screenshot.
+Do not use:
 
-## Responsive and accessible behavior
+- “This definitely happened” for a supplied claim.
+- “They owe you” without a projection/status qualifier.
+- “AI verified” when deterministic processing or extraction occurred.
+- “Payment complete” from an initiated or claimed transfer.
+- “Secure” without naming the concrete boundary.
 
-- Source excerpts wrap and can be reached from finding cards via anchors.
-- Money never truncates; currency code remains visible.
-- Review decisions are keyboard operable and reversible.
-- Screen readers receive the status and the consequence of each decision.
-- Before applying a correction, announce which balances will be recalculated.
-- Empty, malformed, API-failure and partial-result states contain actionable recovery copy.
+## Responsive behavior
 
-## Demo story
+The same complete workflow is available on desktop, tablet, and mobile. Browser verification exercises 1280 px, 768 px, and 390 px widths.
 
-Use the three-person fictional fixture from `PRD.md`. The demo should visibly establish the accommodation agreement, show the partial repayment at its actual evidence status, exclude the unsupported taxi, accept one human decision, recalculate, open supporting evidence, and inspect the authentic Mozaik verification view.
+- Multi-column layouts collapse to one column.
+- Record controls wrap rather than overflow.
+- Evidence excerpts and runtime IDs wrap safely.
+- Money retains its currency code and is not clipped.
+- Dialogs remain within the viewport.
+- The browser journey asserts no horizontal document overflow at all three widths.
 
-The fixture must travel through the same ingestion, investigation, validation and calculation path as user data. No demo-specific result branch is allowed.
+## Accessibility
 
+- A keyboard-visible skip link targets the workspace.
+- Form controls use visible labels and native inputs/selects.
+- Dynamic errors and copy feedback use live status/alert semantics.
+- All visible buttons have accessible names.
+- Citation links move focus to their evidence target.
+- Review actions are native keyboard-operable buttons.
+- Reduced-motion preferences remove nonessential transition duration.
+- Decision state is expressed in text rather than color alone.
+
+T009's headless Chrome journey verified the skip link, reduced motion, button names, citation focus, anchors, and responsive overflow behavior. This is focused automated accessibility coverage, not a claim of a formal WCAG audit.
+
+## Demonstration story
+
+For a judge-facing demonstration, prefer new clearly fictional structured records rather than relying only on the bundled sample:
+
+1. enter participants and an exact unequal split;
+2. add an initiated repayment;
+3. investigate and show distinct overlapping agents;
+4. open a source citation;
+5. link and confirm the repayment, then show the changed projection;
+6. reverse or reject the claim to demonstrate auditable uncertainty;
+7. copy the friendly summary; and
+8. open the verification dialog to show authentic cross-agent events.
+
+The bundled Alex/Bea/Chen fixture remains useful for repeatable tests and is always labeled fictional. Both paths use the same validation, investigation, reconciliation, review, and rendering code.
+
+## Deferred interface concepts
+
+The shipped interface intentionally has no file uploader, OCR/PDF controls, inbox connection, bank connection, account settings, cross-device history, automatic messaging, or provider-backed free-form chat. These must not appear as enabled controls until their underlying capabilities and safety boundaries are implemented and verified.

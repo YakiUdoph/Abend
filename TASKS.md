@@ -1,6 +1,23 @@
 # ABEND Build Plan
 
-Status: **T001–T005 recorded PASS; T006 external submission PARTIAL; T008 real-input implementation PASS, pushed and publicly smoke-tested; submission NOT STARTED**
+Status: **T001–T005 PASS in their recorded scopes; T006 PARTIAL; T007 BLOCKED; T008 IMPLEMENTED; T009 RELEASE VERIFICATION PASS; T010 DOCUMENTATION PASS; submission NOT STARTED**
+
+## Current status summary
+
+| Task | Historical outcome |
+| --- | --- |
+| T001 | **PASS** — installed Mozaik 4.0.6, genuine concurrent loops, semantic events, and shared-state collaboration verified |
+| T002 | **PARTIAL / PROVIDER BLOCKED** — bounded ingestion and deterministic structured extraction pass; external Gemini attempts returned HTTP 500/503 before model output |
+| T003 | **PASS** — deterministic integer-minor-unit reconciliation and core evidence rules verified |
+| T004 | **PASS** — citations, explanations, dual projections, reversible decisions, and provenance verified |
+| T005 | **PASS** — local browser product journey verified |
+| T006 | **PARTIAL** — release audit and public repository passed; authenticated organizer submission did not occur |
+| T007 | **BLOCKED** — authenticated external release/submission work lacked the required external account access at that time; no submission receipt exists |
+| T008 | **PASS** — empty-by-default structured real-input product implemented, pushed, and publicly deployed |
+| T009 | **PASS** — clean-install, security, arithmetic/provenance, concurrency, responsive browser, and public deployment verification passed |
+| T010 | **PASS** — judge-facing repository documentation reconciled with the implementation and full required verification passed |
+
+Later tasks supersede current product status where explicitly stated, but they do not rewrite the evidence or limitations recorded by earlier tasks.
 
 The order is deliberate. A phase advances only when its acceptance criteria and evidence exist. File paths below are proposed and may be refined after Phase 1, but changes must preserve separation between evidence extraction and arithmetic.
 
@@ -115,7 +132,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## Phase 11 — Deploy and record the authentic demonstration
 
-**T006 status: PREPARED / NOT DEPLOYED (2026-10-30).** A production build, `/health` route and free Render blueprint are present. Render fits the single-process in-memory demonstration while active, but free-service restarts discard sessions. No authenticated Render CLI/API session is available, so no production URL or public-host smoke result is claimed.
+**T006 historical status: PREPARED / NOT DEPLOYED (2026-10-30), superseded by T008/T009.** At that task boundary the build and Render blueprint existed but no public deployment was yet claimed. T008 later deployed the product and T009 verified the public journey. Free-service restarts still discard in-memory sessions.
 
 - **Objective:** deploy the working app and capture the genuine fixture flow and runtime evidence.
 - **Dependencies:** Phase 10; safe hosting; secrets; privacy/redaction; organizer rules recheck.
@@ -137,7 +154,7 @@ The order is deliberate. A phase advances only when its acceptance criteria and 
 
 ## T008 — Mozaik-first real-input product
 
-**Local implementation status: PASS (2026-10-30). Public deployment status: VERIFIED at the T008 commit; T009 redeployment verification pending.**
+**Local implementation status: PASS (2026-10-30). Public deployment status: VERIFIED by T008 and reverified by T009.**
 
 - The normal browser path starts empty and accepts bounded participants, currency, expenses, payer, exact shares, repayments/statuses, and optional conversation evidence.
 - Agreement and Payment receive the submitted immutable packet through distinct real Mozaik loops; runtime events and shared state drive deterministic reconciliation.
@@ -171,7 +188,11 @@ T008 superseding status: **A–Q PASS in focused automated coverage; B now passe
 | P | Prompt injection | totals unaffected by directive | content treated as data; no tool escalation |
 | Q | No fabricated findings | every included term valid | unknown source/citation rejected |
 
-## Exact next implementation task
+## Current release task
 
-**T009 status: PASS — READY FOR PRESENTATION VIDEO (2026-10-30).** Record the presentation video against the verified public flow, then complete the organizer submission only when separately authorized. Do not claim durable persistence, authenticated identities, provider-backed extraction, OCR/PDF support or a submission receipt.
+## T010 — Judge-ready repository documentation
+
+**Status: PASS (2026-10-30).** The public README and seven governance documents were reconciled with the shipped implementation, historical evidence was preserved, official public rules were rechecked, Markdown integrity checks passed, and the full required typecheck/test/build/proof/browser/diff verification passed. No application behavior was modified; no presentation video or hackathon submission was created.
+
+After T010 passes, the next authorized product-facing action is to record the presentation video against the verified public flow. Organizer submission remains a separate action requiring an authenticated-channel recheck and explicit authorization. Do not claim durable persistence, authenticated identities, provider-backed extraction, OCR/PDF support, or a submission receipt.
 

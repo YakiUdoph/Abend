@@ -1,8 +1,10 @@
 # ABEND Product Requirements Document
 
-Status: **PROPOSED — pre-build specification only**  
+Status: **ORIGINAL PRODUCT VISION PLUS VERIFIED SHIPPED SCOPE**
 Prepared: 2026-10-30 (Atlantic/Cape_Verde)  
 Competition track: **VERIFIED — Freestyle**
+
+This document preserves the original proposal as historical context. Sections labeled “original” describe the build target written before implementation; the current release table below is authoritative for what shipped.
 
 ## Product definition
 
@@ -13,6 +15,32 @@ Competition track: **VERIFIED — Freestyle**
 **One sentence:** Abend helps people work out who owes whom by examining conversations, receipts, and repayment records, then showing the calculation and supporting evidence.
 
 The former AMEND contract-change concept is retired. It must not influence implementation.
+
+## Current release scope
+
+| Scope | Current status |
+| --- | --- |
+| Empty-by-default structured participant, currency, expense, exact-share, and repayment entry | **SHIPPED / VERIFIED** |
+| Optional bounded conversation excerpt preserved as evidence | **SHIPPED / VERIFIED**; not interpreted as arbitrary natural language |
+| Immutable source spans, hashes, citations, and finding validation | **SHIPPED / VERIFIED** |
+| Concurrent Agreement and Payment Mozaik investigators with shared-state reconciliation | **SHIPPED / VERIFIED** |
+| Deterministic per-currency balances and evidence-only/after-confirmation projections | **SHIPPED / VERIFIED** |
+| Payment linking, confirmation, rejection, reversal, and audited decisions | **SHIPPED / VERIFIED** |
+| Friendly editable summary and authentic runtime verification view | **SHIPPED / VERIFIED** |
+| Free-form conversation/receipt extraction through an external model | **BLOCKED / NOT AVAILABLE** |
+| OCR, PDF/image extraction, and text-file upload | **DEFERRED / NOT AVAILABLE** |
+| Durable storage, accounts, authenticated identity, and cross-device recovery | **DEFERRED / NOT AVAILABLE** |
+| Bank connection, bank settlement verification, payment initiation, debt collection, and automatic messaging | **EXCLUDED** |
+
+## Shipped user journeys
+
+1. **Create a record:** enter participants, one explicit currency, at least one expense, its payer, and exact shares.
+2. **Add repayment evidence:** optionally enter repayment claims and a bounded supporting excerpt.
+3. **Investigate:** submit the immutable packet to distinct concurrent Agreement and Payment investigators.
+4. **Review:** inspect validated findings, citations, unresolved claims, and both projections.
+5. **Decide:** link and confirm a repayment, reject it, or reverse an earlier decision.
+6. **Settle:** inspect recomputed balances and copy an editable respectful summary.
+7. **Verify:** open the secondary technical view for authentic sanitized runtime events and loop identities.
 
 ## Problem and product hypothesis
 
@@ -41,9 +69,9 @@ Research sources and retrieval date are maintained in `RULES.md`.
 
 Core job: “Given this bounded packet of evidence, show the balances it supports, the assumptions it does not support, and what the group needs to clarify.”
 
-## MVP scope
+## Original proposed MVP scope
 
-The MVP must:
+The pre-build MVP proposal required the following. Items not listed as shipped above remain historical goals rather than current capabilities:
 
 1. Accept pasted conversation text and text-based expense/repayment records.
 2. Accept file upload for text; image/PDF extraction is a secondary stretch goal.
@@ -62,7 +90,7 @@ The MVP must:
 
 The MVP must not include bank connections, payment initiation, debt collection, unrestricted message scanning, automatic accusation, or silent currency conversion.
 
-## Primary user journey
+## Original proposed user journey
 
 1. **Add the conversation.** Paste bounded text; explain that uploaded content is untrusted evidence.
 2. **Add payment records.** Paste transaction descriptions or add structured records.
@@ -112,9 +140,9 @@ Expected behavior is derived by the engine, never hardcoded:
 - The taxi is excluded from confirmed obligations until an agreement is documented or confirmed.
 - The explanation cites source spans and asks a polite taxi/repayment clarification.
 
-## Success and acceptance
+## Verified success and acceptance
 
-MVP acceptance requires all of the following:
+The release acceptance requirements were:
 
 - The text-first flow works end to end on the fictional fixture.
 - Two investigators genuinely overlap in execution on Mozaik and a third investigator reacts to their published evidence.
