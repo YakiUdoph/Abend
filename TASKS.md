@@ -1,6 +1,6 @@
 # ABEND Build Plan
 
-Status: **T001–T005 PASS in their recorded scopes; T006 PARTIAL; T007 BLOCKED; T008 IMPLEMENTED; T009 RELEASE VERIFICATION PASS; T010 DOCUMENTATION PASS; T011 LOCAL PASS / PUBLIC DEPLOYMENT PENDING; submission NOT STARTED**
+Status: **T001–T005 PASS in their recorded scopes; T006 PARTIAL; T007 BLOCKED; T008 IMPLEMENTED; T009 RELEASE VERIFICATION PASS; T010 DOCUMENTATION PASS; T011 BRANDING PASS; submission NOT STARTED**
 
 ## Current status summary
 
@@ -16,7 +16,7 @@ Status: **T001–T005 PASS in their recorded scopes; T006 PARTIAL; T007 BLOCKED;
 | T008 | **PASS** — empty-by-default structured real-input product implemented, pushed, and publicly deployed |
 | T009 | **PASS** — clean-install, security, arithmetic/provenance, concurrency, responsive browser, and public deployment verification passed |
 | T010 | **PASS** — judge-facing repository documentation reconciled with the implementation and full required verification passed |
-| T011 | **LOCAL PASS / PUBLIC PENDING** — exact supplied logo, deterministic favicon derivatives, metadata, documentation, and responsive browser verification pass; push/deployment verification remains |
+| T011 | **PASS** — exact supplied logo, deterministic favicon derivatives, metadata, documentation, responsive browser checks, push, and public deployment verification passed |
 
 Later tasks supersede current product status where explicitly stated, but they do not rewrite the evidence or limitations recorded by earlier tasks.
 
@@ -199,5 +199,5 @@ After T010 passes, the next authorized product-facing action is to record the pr
 
 ## T011 — Official logo and favicon integration
 
-**Status: LOCAL PASS / PUBLIC DEPLOYMENT PENDING (2026-10-30).** The exact user-supplied `public/abend-logo.png` is the sole official logo source and remains unchanged. It is integrated into the existing header and README; only the required favicon/touch derivatives were created mechanically; accurate social metadata is present; and typecheck, 56 tests, build, responsive/accessibility browser verification, and diff checks pass locally. Push and public-deployment verification remain before final PASS. Financial and Mozaik behavior were not changed, artwork was not generated or redesigned, and the hackathon entry was not submitted.
+**Status: PASS (2026-10-30).** The exact user-supplied `public/abend-logo.png` is the sole official logo source and remains unchanged. It is integrated into the existing header and README; only the required favicon/touch derivatives were created mechanically; accurate social metadata is present; and typecheck, 56 tests, build, responsive/accessibility browser verification, and diff checks pass locally. Branding commit `7c0ac1e537626a8591c641090428206ba5fe45fb` was pushed to `origin/main`, Render served the exact source with HTTP 200, and a fresh public browser journey passed all brand and existing product assertions. Financial and Mozaik behavior were not changed, artwork was not generated or redesigned, and the hackathon entry was not submitted.
 
