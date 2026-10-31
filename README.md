@@ -8,6 +8,45 @@
 
 Abend is an evidence-first shared-expense and repayment reconciliation application. It helps a group work out what its records support, what remains uncertain, and how a reviewed repayment changes the balance.
 
+## How to Test Abend in 60 Seconds
+
+1. Open [abend.onrender.com](https://abend.onrender.com).
+2. Wait for the free Render service to start if necessary.
+3. Select **Load fictional sample** for a quick walkthrough, or enter the reproducible scenario below.
+4. Click **Investigate records**.
+5. Inspect the Agreement and Payment findings.
+6. Review the supporting evidence and calculated balances.
+7. Confirm, reject, or reverse a repayment decision.
+8. Open the runtime verification section (**Verification**) to inspect genuine Mozaik agent events.
+
+For the reproducible path, enter this scenario:
+
+| Field | Test value |
+| --- | --- |
+| Participants | Mira, Niko, Ola |
+| Currency | USD |
+| Expense | Cabin — $120.00 |
+| Paid by | Mira |
+| Exact shares | Mira: $20.00; Niko: $40.00; Ola: $60.00 |
+| Repayment claim | Niko → Mira |
+| Repayment amount | $15.00 |
+| Purpose | Cabin |
+| Status | `INITIATED` |
+
+Expected initial balances:
+
+- Mira: +$100.00
+- Niko: -$40.00
+- Ola: -$60.00
+
+To apply the repayment, select **Link to Cabin** and then **Confirm receipt**. Expected balances after linking and confirming:
+
+- Mira: +$85.00
+- Niko: -$25.00
+- Ola: -$60.00
+
+This is **fictional test data**, not a real payment.
+
 ## The Problem
 
 Shared expenses are often scattered across memories, chat excerpts, expense notes, and transfer records. The arithmetic may be simple, but the underlying facts are not: who agreed to which share, whether a transfer was merely initiated or actually received, and whether the same record was entered twice.
@@ -91,32 +130,6 @@ flowchart TD
 ```
 
 The browser collects and renders records but contains no financial ledger. Validation, investigation state, decisions, and arithmetic remain server-side.
-
-## A Real Reconciliation Example
-
-The following is a reproducible **TEST SCENARIO**, not customer data:
-
-| Record | Value |
-| --- | --- |
-| Participants | Mira, Niko, Ola |
-| Expense | Cabin, USD 120.00, paid by Mira |
-| Exact shares | Mira USD 20.00; Niko USD 40.00; Ola USD 60.00 |
-| Repayment claim | Niko sent Mira USD 15.00 for Cabin; status `INITIATED` |
-
-Independent calculation before repayment review:
-
-- Mira paid USD 120.00 but consumed USD 20.00, so Mira is owed USD 100.00.
-- Niko owes USD 40.00.
-- Ola owes USD 60.00.
-- The initiated repayment is not yet applied, so these are also the evidence-only balances.
-
-After a reviewer links the repayment to Cabin and confirms receipt:
-
-- Mira is owed USD 85.00.
-- Niko owes USD 25.00.
-- Ola still owes USD 60.00.
-
-The signed balances still sum to zero: `+85 - 25 - 60 = 0`.
 
 ## Financial Correctness
 
